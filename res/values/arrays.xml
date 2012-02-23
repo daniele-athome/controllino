@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="starting">
+        <item>Starting...</item>
+        <item>Starting</item>
+        <item>Starting.</item>
+        <item>Starting..</item>
+    </string-array>
+    <string-array name="stopping">
+        <item>Stopping...</item>
+        <item>Stopping</item>
+        <item>Stopping.</item>
+        <item>Stopping..</item>
+    </string-array>
+    <string-array name="checking">
+        <item>Checking...</item>
+        <item>Checking</item>
+        <item>Checking.</item>
+        <item>Checking..</item>
+    </string-array>
+</resources>
