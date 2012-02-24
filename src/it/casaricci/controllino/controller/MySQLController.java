@@ -18,6 +18,7 @@ public class MySQLController extends SysVInitController {
     public CharSequence getServiceName() {
         return "MySQL server";
     }
+
     @Override
     public CharSequence getServiceDescription() {
         return "MySQL server using System V init script.";
@@ -59,12 +60,12 @@ public class MySQLController extends SysVInitController {
 
     @Override
     public void restart() {
-        // TODO
+        restart(new StartStopShellListener(mUpdateListener));
     }
 
     @Override
     public void reload() {
-        // TODO
+        reload(new StartStopShellListener(mUpdateListener));
     }
 
 }

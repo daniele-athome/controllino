@@ -5,7 +5,6 @@ import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.BaseController;
 import it.casaricci.controllino.controller.BaseController.ResultListener;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -32,7 +31,7 @@ public class StatusActivity extends ListActivity {
 	/** Connector service instance. */
 	private ConnectorService mConnector;
 	/** Reusable status dialog. */
-	private ProgressDialog mStatus;
+	//private ProgressDialog mStatus;
 
     private ResultListener mResultListener = new ResultListener() {
 		@Override
@@ -46,7 +45,7 @@ public class StatusActivity extends ListActivity {
 
 		@Override
 		public void onSuccess(BaseController ctrl) {
-			hideProgress();
+			//hideProgress();
 		}
 	};
 
@@ -107,8 +106,10 @@ public class StatusActivity extends ListActivity {
 	    registerForContextMenu(mListView);
 	    mListView.setLongClickable(false);
 
+	    /*
 	    mStatus = new ProgressDialog(this);
 	    mStatus.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	    */
 
 		// bind to connector
 		if (!bindService(new Intent(this, ConnectorService.class),
@@ -120,6 +121,8 @@ public class StatusActivity extends ListActivity {
 
 	private static final int MENU_START = 1;
 	private static final int MENU_STOP = 2;
+	private static final int MENU_RESTART = 3;
+	private static final int MENU_RELOAD = 4;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -127,8 +130,10 @@ public class StatusActivity extends ListActivity {
 	        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 	        BaseController ctrl = (BaseController) mListView.getItemAtPosition(info.position);
 	        menu.setHeaderTitle(ctrl.getServiceName());
-	        menu.add(Menu.NONE, MENU_START, MENU_START, "Start");
-	        menu.add(Menu.NONE, MENU_STOP, MENU_STOP, "Stop");
+	        menu.add(Menu.NONE, MENU_START, MENU_START, R.string.menu_start);
+	        menu.add(Menu.NONE, MENU_STOP, MENU_STOP, R.string.menu_stop);
+            menu.add(Menu.NONE, MENU_RESTART, MENU_RESTART, R.string.menu_restart);
+            menu.add(Menu.NONE, MENU_RELOAD, MENU_RELOAD, R.string.menu_reload);
 	    }
 	}
 
@@ -139,17 +144,27 @@ public class StatusActivity extends ListActivity {
 
         switch (item.getItemId()) {
             case MENU_START:
-            	//showProgressStartStop("Starting " + ctrl.getServiceName());
                 info.targetView.setEnabled(false);
                 ctrl.setResultListener(mResultListener);
                 ctrl.start();
                 return true;
 
             case MENU_STOP:
-            	//showProgressStartStop("Stopping " + ctrl.getServiceName());
                 info.targetView.setEnabled(false);
             	ctrl.setResultListener(mResultListener);
                 ctrl.stop();
+                return true;
+
+            case MENU_RESTART:
+                info.targetView.setEnabled(false);
+                ctrl.setResultListener(mResultListener);
+                ctrl.restart();
+                return true;
+
+            case MENU_RELOAD:
+                info.targetView.setEnabled(false);
+                ctrl.setResultListener(mResultListener);
+                ctrl.reload();
                 return true;
         }
 
@@ -192,6 +207,7 @@ public class StatusActivity extends ListActivity {
         }
     }
 
+    /*
     private void showProgressStartStop(String message) {
 		mStatus.setMessage(message);
 	    mStatus.setCancelable(false);
@@ -202,12 +218,13 @@ public class StatusActivity extends ListActivity {
     private void hideProgress() {
     	mStatus.dismiss();
     }
+    */
 
 	private void error(final String message) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				hideProgress();
+				//hideProgress();
 				Toast.makeText(StatusActivity.this, message, Toast.LENGTH_LONG).show();
 			}
 		});

@@ -4,6 +4,7 @@ import it.casaricci.controllino.ConnectorService;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.ApacheHTTPController;
 import it.casaricci.controllino.controller.BaseController;
+import it.casaricci.controllino.controller.DelugeController;
 import it.casaricci.controllino.controller.DummyController;
 import it.casaricci.controllino.controller.MySQLController;
 import it.casaricci.controllino.controller.PostfixController;
@@ -59,12 +60,13 @@ public class ServiceStatusListAdapter extends BaseAdapter {
 	public void update(ConnectorService connector) {
 		mConnector = connector;
 
-		// TODO
+		// TODO hard-coded list :D
 		if (mList.size() == 0) {
     		mList.add(new DummyController(connector));
     		mList.add(new ApacheHTTPController(connector));
     		mList.add(new MySQLController(connector));
     		mList.add(new PostfixController(connector));
+    		mList.add(new DelugeController(connector));
 		}
 		else {
 		    for (BaseController ctrl : mList)

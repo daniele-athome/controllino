@@ -68,11 +68,15 @@ public abstract class SysVInitController extends ShellController {
     }
 
     public void restart(ShellExecuteListener listener) {
-        // TODO
+        setStatus(Status.STATUS_RESTARTING);
+        setShellExecuteListener(listener);
+        executeInitScript("restart");
     }
 
     public void reload(ShellExecuteListener listener) {
-        // TODO
+        setStatus(Status.STATUS_RELOADING);
+        setShellExecuteListener(listener);
+        executeInitScript("reload");
     }
 
 }

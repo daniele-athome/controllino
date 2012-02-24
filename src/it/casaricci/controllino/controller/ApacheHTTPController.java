@@ -18,6 +18,7 @@ public class ApacheHTTPController extends SysVInitController {
     public CharSequence getServiceName() {
         return "Apache HTTP server";
     }
+
     @Override
     public CharSequence getServiceDescription() {
         return "Apache server using System V init script.";
@@ -59,12 +60,12 @@ public class ApacheHTTPController extends SysVInitController {
 
     @Override
     public void restart() {
-        // TODO
+        restart(new StartStopShellListener(mUpdateListener));
     }
 
     @Override
     public void reload() {
-        // TODO
+        reload(new StartStopShellListener(mUpdateListener));
     }
 
 }

@@ -18,6 +18,7 @@ public class PostfixController extends SysVInitController {
     public CharSequence getServiceName() {
         return "Postfix server";
     }
+
     @Override
     public CharSequence getServiceDescription() {
         return "Postfix server using System V init script.";
@@ -59,12 +60,12 @@ public class PostfixController extends SysVInitController {
 
     @Override
     public void restart() {
-        // TODO
+        restart(new StartStopShellListener(mUpdateListener));
     }
 
     @Override
     public void reload() {
-        // TODO
+        reload(new StartStopShellListener(mUpdateListener));
     }
 
 }
