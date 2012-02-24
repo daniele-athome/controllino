@@ -40,6 +40,8 @@ public class MySQLController extends SysVInitController {
         public void onExecuteFinish(ShellController ctrl, int exitStatus) {
             if (exitStatus == 0)
                 setStatus(Status.STATUS_RUNNING);
+            else if (exitStatus == 3)
+                setStatus(Status.STATUS_STOPPED);
             else
                 setStatus(Status.STATUS_UNKNOWN);
         }
