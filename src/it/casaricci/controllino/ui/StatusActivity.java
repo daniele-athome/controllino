@@ -181,6 +181,12 @@ public class StatusActivity extends ListActivity {
         case R.id.status_update:
             mAdapter.update(mConnector);
             return true;
+        case R.id.disconnect:
+            mConnection.disconnect();
+            stopService(new Intent(this, ConnectorService.class));
+            // exit the activity
+            finish();
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }
