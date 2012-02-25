@@ -39,8 +39,12 @@ public class DelugeController extends SysVInitController {
 
         @Override
         public void onExecuteFinish(ShellController ctrl, int exitStatus) {
-            // TODO init script is not capable of checking daemon status
-            setStatus(Status.STATUS_UNKNOWN);
+            if (exitStatus == 0)
+                setStatus(Status.STATUS_RUNNING);
+            else if (exitStatus == 3)
+                setStatus(Status.STATUS_STOPPED);
+            else
+                setStatus(Status.STATUS_UNKNOWN);
         }
     }
 
