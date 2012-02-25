@@ -1,70 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp">
-
-    <TextView
-        android:id="@+id/label_server"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="Server"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <EditText
-        android:id="@+id/login_server"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/label_server"
-        android:inputType="textUri"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/label_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/login_server"
-        android:text="Username"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <EditText
-        android:id="@+id/login_username"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/label_username"
-        android:inputType="textEmailAddress"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/label_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/label_username"
-        android:layout_below="@+id/login_username"
-        android:text="Password"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <EditText
-        android:id="@+id/login_password"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_alignLeft="@id/login_username"
-        android:layout_below="@id/label_password"
-        android:inputType="textPassword" />
-    <!-- TEST TEST TEST TEST PASSWORD TEST -->
-
-    <Button
-        android:id="@+id/login_button"
+    android:layout_height="fill_parent">
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/login_password"
-        android:layout_marginTop="20dp"
-        android:onClick="login"
-        android:text="Login" />
-
-</RelativeLayout>
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+    
+        <TextView
+            android:id="@+id/label_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Server"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+        <EditText
+            android:id="@+id/login_server"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/label_server"
+            android:inputType="textUri"
+            android:layout_centerHorizontal="true" />
+    
+        <TextView
+            android:id="@+id/label_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/login_server"
+            android:text="Username"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+        <EditText
+            android:id="@+id/login_username"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/label_username"
+            android:inputType="textEmailAddress"
+            android:layout_centerHorizontal="true" />
+    
+        <TextView
+            android:id="@+id/label_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/label_username"
+            android:layout_below="@+id/login_username"
+            android:text="Password"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@id/login_username"
+            android:layout_below="@id/label_password"
+            android:inputType="textPassword" />
+        
+        <CheckBox
+            android:id="@+id/login_remember"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/login_password"
+            android:text="Remember password"
+            />
+    
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_remember"
+            android:onClick="login"
+            android:text="Login" />
+    
+    </RelativeLayout>
+</ScrollView>

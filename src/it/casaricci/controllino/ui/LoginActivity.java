@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class LoginActivity extends Activity implements ConnectorService.Connecto
 	private TextView mServer;
 	private TextView mUsername;
 	private TextView mPassword;
+	private CheckBox mRemember;
 
 	/** Reusable status dialog. */
 	private ProgressDialog mStatus;
@@ -77,13 +79,20 @@ public class LoginActivity extends Activity implements ConnectorService.Connecto
 	    mServer = (TextView) findViewById(R.id.login_server);
 	    mUsername = (TextView) findViewById(R.id.login_username);
 	    mPassword = (TextView) findViewById(R.id.login_password);
+	    mRemember = (CheckBox) findViewById(R.id.login_remember);
 
 	    // recover recent values - if any
 	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	    String server = prefs.getString("recent.server", null);
 	    String username = prefs.getString("recent.username", null);
+	    String password = prefs.getString("recent.password", null);
 
-	    mPassword.requestFocus();
+        if (!TextUtils.isEmpty(password)) {
+            mPassword.setText(password);
+            mRemember.setChecked(true);
+        }
+        else
+            mPassword.requestFocus();
 
 	    if (!TextUtils.isEmpty(username))
 	    	mUsername.setText(username);
@@ -119,10 +128,17 @@ public class LoginActivity extends Activity implements ConnectorService.Connecto
 
 		// save recent values in preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.edit()
+		SharedPreferences.Editor editor = prefs.edit();
+		editor
 			.putString("recent.server", server)
-			.putString("recent.username", username)
-			.commit();
+			.putString("recent.username", username);
+
+		if (mRemember.isChecked())
+		    editor.putString("recent.password", password);
+		else
+		    editor.remove("recent.password");
+
+		editor.commit();
 
 		// status: connecting
 		mStatus.setMessage("Connecting...");
