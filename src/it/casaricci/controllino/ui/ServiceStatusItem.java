@@ -24,6 +24,7 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
     private BaseController mController;
     private ImageView mStatusIcon;
     private TextView mServiceName;
+    private ImageView mServiceIcon;
     private TextSwitcher mServiceStatus;
 
     private StatusChangedListener mStatusListener = new StatusChangedListener() {
@@ -112,8 +113,9 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mStatusIcon = (ImageView) findViewById(R.id.icon);
+        mStatusIcon = (ImageView) findViewById(R.id.light);
         mServiceName = (TextView) findViewById(R.id.name);
+        mServiceIcon = (ImageView) findViewById(R.id.icon);
         mServiceStatus = (TextSwitcher) findViewById(R.id.status);
         mServiceStatus.setFactory(this);
 
@@ -128,6 +130,7 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
         mController = controller;
 
         mServiceName.setText(mController.getServiceName());
+        mServiceIcon.setImageResource(mController.getServiceIcon());
 
         // begin update
         mController.setStatusChangedListener(mStatusListener);

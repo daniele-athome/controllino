@@ -1,6 +1,7 @@
 package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.R;
 
 
 /**
@@ -22,6 +23,11 @@ public class DelugeController extends SysVInitController {
     @Override
     public CharSequence getServiceDescription() {
         return "Deluge torrent daemon using System V init script.";
+    }
+
+    @Override
+    public int getServiceIcon() {
+        return R.drawable.ic_launcher;
     }
 
     @Override

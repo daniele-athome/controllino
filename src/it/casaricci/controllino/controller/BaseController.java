@@ -38,6 +38,9 @@ public abstract class BaseController {
 	/** Returns the service description. */
 	public abstract CharSequence getServiceDescription();
 
+	/** Returns the service icon resource. */
+	public abstract int getServiceIcon();
+
 	/** Returns the status of the process monitored by this controller. */
 	public Status getStatus() {
 	    return mStatus;

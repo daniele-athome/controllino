@@ -1,6 +1,7 @@
 package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.R;
 
 
 /**
@@ -29,6 +30,11 @@ public class DummyController extends BaseController {
 	public CharSequence getServiceDescription() {
 		return "A dummy controller for a dummy service.";
 	}
+
+    @Override
+    public int getServiceIcon() {
+        return R.drawable.ic_launcher;
+    }
 
     @Override
     public void start() {
