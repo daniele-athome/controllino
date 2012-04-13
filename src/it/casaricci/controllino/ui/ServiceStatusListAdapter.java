@@ -68,10 +68,10 @@ public class ServiceStatusListAdapter extends BaseAdapter {
     		mList.add(new PostfixController(connector));
     		mList.add(new DelugeController(connector));
 		}
-		else {
-		    for (BaseController ctrl : mList)
-                ctrl.update();
-		}
+
+	    for (BaseController ctrl : mList)
+            ctrl.update();
+
 		notifyDataSetChanged();
 	}
 

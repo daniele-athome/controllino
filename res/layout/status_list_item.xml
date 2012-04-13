@@ -17,32 +17,34 @@
         android:src="@drawable/idle_light" />
 
     <TextSwitcher
-      android:id="@+id/status"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_toRightOf="@id/icon"
-      android:layout_alignParentBottom="true"
-      android:layout_alignParentRight="true"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:layout_marginBottom="5dip"/>
+        android:id="@+id/status"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dip"
+        android:layout_toLeftOf="@+id/light"
+        android:layout_toRightOf="@id/icon"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-      android:id="@+id/name"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_toRightOf="@id/icon"
-      android:layout_alignParentRight="true"
-      android:layout_alignParentTop="true"
-      android:textAppearance="?android:attr/textAppearanceLarge"
-      android:layout_above="@id/status"
-      android:layout_alignWithParentIfMissing="true"
-      android:gravity="center_vertical"/>
+        android:id="@+id/name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/status"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toLeftOf="@+id/light"
+        android:layout_toRightOf="@id/icon"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:inputType="text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView
         android:id="@+id/light"
         android:layout_width="40dip"
         android:layout_height="fill_parent"
-        android:layout_alignRight="@+id/name"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:contentDescription="Status"

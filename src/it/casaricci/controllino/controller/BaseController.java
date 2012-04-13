@@ -28,12 +28,8 @@ public abstract class BaseController {
     protected StatusChangedListener mStatusChangedListener;
     protected ResultListener mResultListener;
 
-    protected boolean mDirty;
-
 	public BaseController(ConnectorService connector) {
 	    mConnector = connector;
-	    // mark as dirty immediately
-	    mDirty = true;
     }
 
 	/** Returns the service name. */
@@ -56,8 +52,6 @@ public abstract class BaseController {
 
 	protected void setStatus(Status status, boolean fireListener) {
 	    mStatus = status;
-	    // status is now set, mark as clean
-	    mDirty = false;
 	    if (fireListener)
 	        statusChanged();
 	}
@@ -65,10 +59,6 @@ public abstract class BaseController {
 	public void setResultListener(ResultListener listener) {
 		mResultListener = listener;
 	}
-
-    public boolean isDirty() {
-        return mDirty;
-    }
 
 	protected void notifyError(Throwable e) {
 		if (mResultListener != null)
