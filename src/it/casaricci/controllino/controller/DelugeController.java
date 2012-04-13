@@ -27,7 +27,7 @@ public class DelugeController extends SysVInitController {
 
     @Override
     public int getServiceIcon() {
-        return R.drawable.ic_launcher;
+        return R.drawable.ctrl_deluge;
     }
 
     @Override
