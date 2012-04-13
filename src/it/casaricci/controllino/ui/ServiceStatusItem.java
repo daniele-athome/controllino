@@ -134,7 +134,8 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
 
         // begin update
         mController.setStatusChangedListener(mStatusListener);
-        mController.update();
+        if (mController.isDirty())
+            mController.update();
     }
 
     public BaseController getController() {
