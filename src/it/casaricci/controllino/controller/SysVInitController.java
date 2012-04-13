@@ -21,7 +21,7 @@ public abstract class SysVInitController extends ShellController {
 
         @Override
         public void onError(ShellController ctrl, Throwable e) {
-            // TODO
+            // TODO error handling
             setStatus(Status.STATUS_ERROR);
         }
 

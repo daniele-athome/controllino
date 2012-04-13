@@ -94,6 +94,7 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
                         if (textId > 0)
                             mServiceStatus.setText(getResources().getString(textId));
                         else
+                            // TODO i18n (for unknown status?)
                             mServiceStatus.setText("Status: " + st);
                     }
                 }

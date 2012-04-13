@@ -50,11 +50,11 @@ public class DummyController extends BaseController {
 
     @Override
     public void restart() {
-        // TODO
+        start();
     }
 
     @Override
     public void reload() {
-        // TODO
+        start();
     }
 }

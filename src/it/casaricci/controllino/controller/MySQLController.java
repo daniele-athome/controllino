@@ -39,7 +39,7 @@ public class MySQLController extends SysVInitController {
 
         @Override
         public void onError(ShellController ctrl, Throwable e) {
-            // TODO
+            // TODO error handling
             setStatus(Status.STATUS_ERROR);
         }
 
