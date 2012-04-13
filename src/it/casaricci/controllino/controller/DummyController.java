@@ -33,7 +33,7 @@ public class DummyController extends BaseController {
 
     @Override
     public int getServiceIcon() {
-        return R.drawable.ic_launcher;
+        return R.drawable.ctrl_dummy;
     }
 
     @Override
