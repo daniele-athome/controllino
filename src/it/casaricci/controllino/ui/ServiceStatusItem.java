@@ -91,6 +91,7 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
                     }
                     else {
                         mServiceStatus.clearAnimation();
+                        mServiceStatus.reset();
                         if (textId > 0)
                             mServiceStatus.setText(getResources().getString(textId));
                         else
