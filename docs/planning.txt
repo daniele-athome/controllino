@@ -1,0 +1,9 @@
+* server profiles:
+ - templates containing the script control definitions:
+   - script type (SysV init, upstart, ...)
+   - service type (Apache, MySQL, ... or custom)
+
+* servers
+ - server address and login data connected to a server profile
+
+* configuration stored in database

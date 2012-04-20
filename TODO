@@ -1,0 +1,2 @@
+[ ] when rendering entries partially, new entries don't get refresh (is it a UI
+    thing or it's the service status?)
