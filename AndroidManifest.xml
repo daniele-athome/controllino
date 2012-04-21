@@ -26,6 +26,8 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.ServicesPreferences" android:label="@string/prefs_services">
+        </activity>
 
     </application>
 

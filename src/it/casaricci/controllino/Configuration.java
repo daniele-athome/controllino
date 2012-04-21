@@ -2,6 +2,7 @@ package it.casaricci.controllino;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -11,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author Daniele Ricci
  */
 public class Configuration extends SQLiteOpenHelper {
+    private static Configuration instance;
 
     private static final String DATABASE_NAME = "config.db";
     private static final int DATABASE_VERSION = 1;
@@ -40,8 +42,9 @@ public class Configuration extends SQLiteOpenHelper {
     // TODO foreign keys
     private static final String SCHEMA_PROFILE_SERVICES =
         "CREATE TABLE " + TABLE_PROFILE_SERVICES + " (" +
-        "profile_id INTEGER PRIMARY KEY," +
-        "service_id INTEGER PRIMARY KEY" +
+        "profile_id INTEGER NOT NULL," +
+        "service_id INTEGER NOT NULL," +
+        "PRIMARY KEY (profile_id, service_id)" +
         ")";
 
     // TODO foreign keys
@@ -71,6 +74,17 @@ public class Configuration extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // version 1 - no upgrade yet
+    }
+
+    public static Configuration getInstance(Context context) {
+        if (instance == null)
+            instance = new Configuration(context.getApplicationContext());
+        return instance;
+    }
+
+    public Cursor getServices() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_SERVICES, null, null, null, null, null, "name");
     }
 
     public long addService(String name, String version, String type, String command) {
