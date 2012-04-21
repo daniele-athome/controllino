@@ -15,4 +15,5 @@
     <string name="pref_summary_profiles">Build server templates</string>
 
     <string name="prefs_services">Services</string>
+    <string name="prefs_profiles">Server profiles</string>
 </resources>

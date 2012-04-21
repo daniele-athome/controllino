@@ -111,6 +111,11 @@ public class Configuration extends SQLiteOpenHelper {
         db.close();
     }
 
+    public Cursor getProfiles() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_PROFILES, null, null, null, null, null, "name");
+    }
+
     public long addProfile(String name, String osName, String osVersion, long[] services) {
         SQLiteDatabase db = getWritableDatabase();
         try {

@@ -32,6 +32,18 @@ public class MainPreferences extends PreferenceActivity {
                 return true;
             }
         });
+
+        PreferenceScreen pProfiles = (PreferenceScreen) getPreferenceScreen()
+            .findPreference("pref_profiles");
+        final Intent pProfilesIntent = new Intent(this, ProfilesPreferences.class);
+
+        pProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(pProfilesIntent);
+                return true;
+            }
+        });
     }
 
 }
