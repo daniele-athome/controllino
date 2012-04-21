@@ -37,6 +37,11 @@ public class ConnectorService extends Service {
 	private Session mSession;
 
 	@Override
+	public void onStart(Intent intent, int startId) {
+	    onStartCommand(intent, 0, startId);
+	}
+
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		mServer = intent.getStringExtra(EXTRA_SERVER);
 		mUsername = intent.getStringExtra(EXTRA_USERNAME);
