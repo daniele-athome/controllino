@@ -13,20 +13,16 @@
 
         <activity android:name=".ui.LoginActivity" android:theme="@android:style/Theme.Light"/>
         <service android:name="ConnectorService"/>
-        <activity android:name=".ui.StatusActivity"
-            android:theme="@style/Theme">
+        <activity android:name=".ui.StatusActivity" android:theme="@style/Theme"/>
+        <activity android:name=".ui.MainPreferences"/>
+        <activity android:name=".ui.ServicesPreferences" android:label="@string/prefs_services">
+        </activity>
+        <activity android:name=".ui.ServerListActivity" android:theme="@style/Theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".ui.MainPreferences">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".ui.ServicesPreferences" android:label="@string/prefs_services">
         </activity>
 
     </application>

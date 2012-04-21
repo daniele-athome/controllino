@@ -165,6 +165,11 @@ public class Configuration extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getServers() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_SERVERS, null, null, null, null, null, "name");
+    }
+
     public long addServer(String name, String address, int port, String username, String password, long profileId) {
         SQLiteDatabase db = getWritableDatabase();
 

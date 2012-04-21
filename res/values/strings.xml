@@ -12,9 +12,7 @@
     <string name="pref_title_services">Services</string>
     <string name="pref_summary_services">Define system services</string>
     <string name="pref_title_profiles">Profiles</string>
-    <string name="pref_summary_profiles">Build templates of servers</string>
-    <string name="pref_title_servers">Servers</string>
-    <string name="pref_summary_servers">Configure servers</string>
+    <string name="pref_summary_profiles">Build server templates</string>
 
     <string name="prefs_services">Services</string>
 </resources>

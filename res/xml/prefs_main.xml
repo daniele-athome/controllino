@@ -3,6 +3,5 @@
     <PreferenceScreen android:title="@string/pref_title_services" android:summary="@string/pref_summary_services" android:key="pref_services">
     </PreferenceScreen>
     <PreferenceScreen android:title="@string/pref_title_profiles" android:summary="@string/pref_summary_profiles" android:key="pref_profiles"></PreferenceScreen>
-    <PreferenceScreen android:title="@string/pref_title_servers" android:summary="@string/pref_summary_servers" android:key="pref_servers"></PreferenceScreen>
 
 </PreferenceScreen>
