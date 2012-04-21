@@ -47,7 +47,7 @@ public class ProfilesPreferences extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_profile:
-                // TODO add profile
+                startActivity(ProfileEditor.newEditor(this));
                 return true;
 
             default:
