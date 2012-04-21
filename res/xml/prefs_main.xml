@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceScreen android:title="Services" android:summary="Define system services">
+        <CheckBoxPreference android:title="Test 1"/>
+        <CheckBoxPreference android:title="Test 2"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Profiles" android:summary="Build templates of servers"></PreferenceScreen>
+    <PreferenceScreen android:title="Servers" android:summary="Configure servers"></PreferenceScreen>
+
+</PreferenceScreen>
