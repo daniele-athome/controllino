@@ -5,11 +5,13 @@ import it.casaricci.controllino.R;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 
 /**
@@ -20,7 +22,6 @@ public class ProfilesPreferences extends ListActivity {
     private ListAdapter mAdapter;
 
     /** Called when the activity is first created. */
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +54,11 @@ public class ProfilesPreferences extends ListActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onListItemClick(ListView list, View view, int position, long id) {
+        // TODO we need to change ListAdapter
     }
 
 }

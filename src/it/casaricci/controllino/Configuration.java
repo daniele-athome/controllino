@@ -87,6 +87,15 @@ public class Configuration extends SQLiteOpenHelper {
         return db.query(TABLE_SERVICES, null, null, null, null, null, "name");
     }
 
+    public Cursor getServices(long profileId) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_SERVICES + " s JOIN " +
+            TABLE_PROFILE_SERVICES + " ps ON s._id = ps.service_id",
+            null,
+            "ps.profile_id = ?", new String[] { String.valueOf(profileId) },
+            null, null, "name");
+    }
+
     public long addService(String name, String version, String type, String command) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -114,6 +123,12 @@ public class Configuration extends SQLiteOpenHelper {
     public Cursor getProfiles() {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(TABLE_PROFILES, null, null, null, null, null, "name");
+    }
+
+    public Cursor getProfile(long profileId) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_PROFILES, null, "_id = ?",
+            new String[] { String.valueOf(profileId) }, null, null, "name");
     }
 
     public long addProfile(String name, String osName, String osVersion, long[] services) {
