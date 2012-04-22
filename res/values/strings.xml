@@ -16,4 +16,7 @@
 
     <string name="prefs_services">Services</string>
     <string name="prefs_profiles">Server profiles</string>
+    <string name="profile_meta_name">Name</string>
+    <string name="profile_meta_osname">OS name</string>
+    <string name="profile_meta_osversion">OS version</string>
 </resources>
