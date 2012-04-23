@@ -9,6 +9,8 @@
     <string name="menu_restart">Restart</string>
     <string name="menu_reload">Reload</string>
 
+    <string name="list_services_empty">Use &lt;b&gt;Menu&lt;/b&gt; &gt; &lt;b>Add server&lt;/b&gt; to add new servers.</string>
+
     <string name="pref_title_services">Services</string>
     <string name="pref_summary_services">Define system services</string>
     <string name="pref_title_profiles">Profiles</string>

@@ -9,6 +9,10 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 
+/**
+ * A simple generic {@link CursorAdapter}.
+ * @author Daniele Ricci
+ */
 public abstract class BaseCursorListAdapter extends CursorAdapter {
     protected int mViewResource;
     protected int mTitleResource;

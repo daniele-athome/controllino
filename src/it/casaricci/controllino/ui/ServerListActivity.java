@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 
 /**
@@ -26,10 +28,13 @@ public class ServerListActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server_list_screen);
+        TextView text = (TextView) findViewById(android.R.id.empty);
+        text.setText(Html.fromHtml(getString(R.string.list_services_empty)));
 
         Cursor c = Configuration.getInstance(this).getServers();
         startManagingCursor(c);
 
+        // TODO ad-hoc CursorAdapter (based on BaseCursorListAdapter)
         mAdapter = new SimpleCursorAdapter(this,
             android.R.layout.simple_list_item_2, c,
             new String[] { "name", "address" },
