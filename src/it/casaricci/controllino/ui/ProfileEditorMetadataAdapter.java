@@ -58,9 +58,11 @@ public class ProfileEditorMetadataAdapter extends ArrayAdapter<ServerProfileInfo
 
         TextView textTitle = (TextView) view.findViewById(mTitleResource);
         TextView textSummary = (TextView) view.findViewById(mSummaryResource);
-        LinearLayout widget = (LinearLayout) view.findViewById(android.R.id.widget_frame);
-        ImageView icon = (ImageView) mInflater.inflate(R.layout.preference_dialog, widget, false);
-        widget.addView(icon);
+        if (convertView == null)  {
+            LinearLayout widget = (LinearLayout) view.findViewById(android.R.id.widget_frame);
+            ImageView icon = (ImageView) mInflater.inflate(R.layout.preference_dialog, widget, false);
+            widget.addView(icon);
+        }
 
         ServerProfileInfo item = getItem(position);
         textTitle.setText(mContext.getString(item.getResourceId()));

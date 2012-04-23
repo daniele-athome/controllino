@@ -96,6 +96,12 @@ public class Configuration extends SQLiteOpenHelper {
             null, null, "name");
     }
 
+    public Cursor getService(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query(TABLE_SERVICES, null, "_id = ?",
+            new String[] { String.valueOf(id) }, null, null, null);
+    }
+
     public long addService(String name, String version, String type, String command) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -105,9 +111,7 @@ public class Configuration extends SQLiteOpenHelper {
         values.put("type", type);
         values.put("command", command);
 
-        long id = db.insert(TABLE_SERVICES, null, values);
-        db.close();
-        return id;
+        return db.insert(TABLE_SERVICES, null, values);
     }
 
     public void updateService(long id, String name, String version, String type, String command) {
@@ -117,7 +121,6 @@ public class Configuration extends SQLiteOpenHelper {
     public void removeService(long id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_SERVICES, "_id = ?", new String[] { String.valueOf(id) });
-        db.close();
     }
 
     public Cursor getProfiles() {
@@ -125,10 +128,10 @@ public class Configuration extends SQLiteOpenHelper {
         return db.query(TABLE_PROFILES, null, null, null, null, null, "name");
     }
 
-    public Cursor getProfile(long profileId) {
+    public Cursor getProfile(long id) {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(TABLE_PROFILES, null, "_id = ?",
-            new String[] { String.valueOf(profileId) }, null, null, "name");
+            new String[] { String.valueOf(id) }, null, null, null);
     }
 
     public long addProfile(String name, String osName, String osVersion, long[] services) {
@@ -141,28 +144,60 @@ public class Configuration extends SQLiteOpenHelper {
             values.put("name", name);
             values.put("os_name", osName);
             values.put("os_version", osVersion);
-            long profId = db.insert(TABLE_PROFILES, null, values);
+            long id = db.insert(TABLE_PROFILES, null, values);
 
             // insert profile services
-            values.clear();
-            for (long servId : services) {
-                values.put("profile_id", profId);
-                values.put("service_id", servId);
-                db.insert(TABLE_PROFILE_SERVICES, null, values);
+            if (services != null && services.length > 0) {
+                values.clear();
+                for (long servId : services) {
+                    values.put("profile_id", id);
+                    values.put("service_id", servId);
+                    db.insert(TABLE_PROFILE_SERVICES, null, values);
+                }
             }
 
             // commit!
             db.setTransactionSuccessful();
-            return profId;
+            return id;
         }
         finally {
             db.endTransaction();
-            db.close();
         }
     }
 
     public void updateProfile(long id, String name, String osName, String osVersion, long[] services) {
-        // TODO
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            // insert profile
+            ContentValues values = new ContentValues(3);
+            values.put("name", name);
+            values.put("os_name", osName);
+            values.put("os_version", osVersion);
+            db.update(TABLE_PROFILES, values,
+                "_id = ?", new String[] { String.valueOf(id) });
+
+            // reinsert profile services
+            if (services != null) {
+                db.delete(TABLE_PROFILE_SERVICES, "profile_id = ?",
+                    new String[] { String.valueOf(id) });
+                if (services.length > 0) {
+                    values.clear();
+                    for (long servId : services) {
+                        values.put("profile_id", id);
+                        values.put("service_id", servId);
+                        db.insert(TABLE_PROFILE_SERVICES, null, values);
+                    }
+                }
+            }
+
+            // commit!
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
     }
 
     public void removeProfile(long id) {
@@ -181,7 +216,6 @@ public class Configuration extends SQLiteOpenHelper {
         }
         finally {
             db.endTransaction();
-            db.close();
         }
     }
 
@@ -201,9 +235,7 @@ public class Configuration extends SQLiteOpenHelper {
         values.put("password", password);
         values.put("profile_id", profileId);
 
-        long id = db.insert(TABLE_SERVERS, null, values);
-        db.close();
-        return id;
+        return db.insert(TABLE_SERVERS, null, values);
     }
 
     public void updateServer(long id, String name, String address, int port, String username, String password, long profile) {
@@ -213,7 +245,6 @@ public class Configuration extends SQLiteOpenHelper {
     public void removeServer(long id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_SERVERS, "_id = ?", new String[] { String.valueOf(id) });
-        db.close();
     }
 
 }

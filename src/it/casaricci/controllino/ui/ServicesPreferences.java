@@ -5,8 +5,9 @@ import it.casaricci.controllino.R;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.widget.ListAdapter;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.widget.CursorAdapter;
 
 
 /**
@@ -14,10 +15,9 @@ import android.widget.ListAdapter;
  * @author Daniele Ricci
  */
 public class ServicesPreferences extends ListActivity {
-    private ListAdapter mAdapter;
+    private CursorAdapter mAdapter;
 
     /** Called when the activity is first created. */
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +26,17 @@ public class ServicesPreferences extends ListActivity {
         Cursor c = Configuration.getInstance(this).getServices();
         startManagingCursor(c);
 
-        mAdapter = new SimpleCursorAdapter(this,
-            android.R.layout.simple_list_item_2, c,
-            new String[] { "name", "version" },
-            new int[] { android.R.id.text1, android.R.id.text2 });
+        mAdapter = new ServicesListAdapter(this,
+            R.layout.preference,
+            android.R.id.title, android.R.id.summary, c);
         setListAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.services_menu, menu);
+        return true;
     }
 
 }
