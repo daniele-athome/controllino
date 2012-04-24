@@ -29,7 +29,7 @@ public class ServerListActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server_list_screen);
         TextView text = (TextView) findViewById(android.R.id.empty);
-        text.setText(Html.fromHtml(getString(R.string.list_services_empty)));
+        text.setText(Html.fromHtml(getString(R.string.list_servers_empty)));
 
         Cursor c = Configuration.getInstance(this).getServers();
         startManagingCursor(c);

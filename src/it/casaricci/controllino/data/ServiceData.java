@@ -13,18 +13,24 @@ import android.widget.ArrayAdapter;
  * @author Daniele Ricci
  */
 public class ServiceData {
-    private long id;
+    private final long id;
     private String name;
     private String version;
+    private String type;
+    private String command;
+    private String icon;
 
     public ServiceData(long id) {
         this.id = id;
     }
 
-    public ServiceData(long id, String name, String version) {
+    public ServiceData(long id, String name, String version, String type, String command, String icon) {
         this.id = id;
         this.name = name;
         this.version = version;
+        this.type = type;
+        this.command = command;
+        this.icon = icon;
     }
 
     public long getId() {
@@ -37,6 +43,18 @@ public class ServiceData {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     @Override
@@ -53,7 +71,8 @@ public class ServiceData {
 
     public static ServiceData fromCursor(Cursor c) {
         return new ServiceData(c.getLong(0),
-            c.getString(1), c.getString(2));
+            c.getString(1), c.getString(2), c.getString(3),
+            c.getString(4), c.getString(5));
     }
 
     public static long[] toIdList(List<ServiceData> list) {

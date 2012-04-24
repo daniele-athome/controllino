@@ -2,7 +2,7 @@ package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.R;
-import it.casaricci.controllino.data.ServerProfileInfo;
+import it.casaricci.controllino.data.RecordInfo;
 import it.casaricci.controllino.data.ServiceData;
 
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,8 +42,8 @@ public class ProfileEditor extends ListActivity {
 
     /** The profile metadata adapter. */
     private ProfileEditorMetadataAdapter mMetadataAdapter;
-    /** FIXME ArrayAdapter is not enough. */
-    private ArrayAdapter<ServiceData> mServicesAdapter;
+    /** Profile services adapter. */
+    private ProfileServicesAdapter mServicesAdapter;
     private List<ServiceData> mServicesList;
     /** Profile Id - if any. */
     private long mProfileId;
@@ -60,7 +59,7 @@ public class ProfileEditor extends ListActivity {
         setContentView(R.layout.profile_editor);
 
         mConfig = Configuration.getInstance(this);
-        List<ServerProfileInfo> list = new ArrayList<ServerProfileInfo>();
+        List<RecordInfo> list = new ArrayList<RecordInfo>();
 
         Intent i = getIntent();
         mProfileId = i.getLongExtra(EXTRA_PROFILE_ID, 0);
@@ -69,16 +68,16 @@ public class ProfileEditor extends ListActivity {
             // load profile metadata
             Cursor c = mConfig.getProfile(mProfileId);
             c.moveToNext();
-            list.add(new ServerProfileInfo("name", c.getString(1), R.string.profile_meta_name));
-            list.add(new ServerProfileInfo("os_name", c.getString(2), R.string.profile_meta_osname));
-            list.add(new ServerProfileInfo("os_version", c.getString(3), R.string.profile_meta_osversion));
+            list.add(new RecordInfo("name", c.getString(1), R.string.profile_meta_name));
+            list.add(new RecordInfo("os_name", c.getString(2), R.string.profile_meta_osname));
+            list.add(new RecordInfo("os_version", c.getString(3), R.string.profile_meta_osversion));
             c.close();
         }
         else {
             // TODO i18n
-            list.add(new ServerProfileInfo("name", "New profile", R.string.profile_meta_name));
-            list.add(new ServerProfileInfo("os_name", "Debian", R.string.profile_meta_osname));
-            list.add(new ServerProfileInfo("os_version", "6.0.4", R.string.profile_meta_osversion));
+            list.add(new RecordInfo("name", "New profile", R.string.profile_meta_name));
+            list.add(new RecordInfo("os_name", "Debian", R.string.profile_meta_osname));
+            list.add(new RecordInfo("os_version", "6.0.4", R.string.profile_meta_osversion));
         }
 
         MergeAdapter adapter = new MergeAdapter();
@@ -104,8 +103,9 @@ public class ProfileEditor extends ListActivity {
             c.close();
         }
 
-        mServicesAdapter = new ArrayAdapter<ServiceData>(this,
-            android.R.layout.simple_list_item_2, android.R.id.text1, mServicesList);
+        mServicesAdapter = new ProfileServicesAdapter(this,
+            R.layout.preference_icon, android.R.id.title, android.R.id.summary,
+            android.R.id.icon, mServicesList);
         adapter.addAdapter(mServicesAdapter);
         setListAdapter(adapter);
     }
@@ -218,9 +218,9 @@ public class ProfileEditor extends ListActivity {
     /** Saves the profile the user is editing. */
     private void save() {
         // retrieve metadata from adapter
-        ServerProfileInfo name = mMetadataAdapter.getItem(0);
-        ServerProfileInfo osName = mMetadataAdapter.getItem(1);
-        ServerProfileInfo osVersion = mMetadataAdapter.getItem(2);
+        RecordInfo name = mMetadataAdapter.getItem(0);
+        RecordInfo osName = mMetadataAdapter.getItem(1);
+        RecordInfo osVersion = mMetadataAdapter.getItem(2);
 
         // existing profile
         if (mProfileId > 0) {
@@ -239,8 +239,8 @@ public class ProfileEditor extends ListActivity {
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         Object item = list.getItemAtPosition(position);
-        if (item instanceof ServerProfileInfo) {
-            editMetadata((ServerProfileInfo) item);
+        if (item instanceof RecordInfo) {
+            editMetadata((RecordInfo) item);
         }
         else if (item instanceof ServiceData) {
             // TODO what to do with service??
@@ -250,7 +250,7 @@ public class ProfileEditor extends ListActivity {
         }
     }
 
-    private void editMetadata(final ServerProfileInfo info) {
+    private void editMetadata(final RecordInfo info) {
         mDirty = true;
         LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.layout.edittext_dialog, null);

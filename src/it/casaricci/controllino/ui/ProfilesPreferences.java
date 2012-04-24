@@ -7,12 +7,14 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -30,6 +32,8 @@ public class ProfilesPreferences extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.prefs_profiles);
+        TextView text = (TextView) findViewById(android.R.id.empty);
+        text.setText(Html.fromHtml(getString(R.string.list_profiles_empty)));
 
         Cursor c = Configuration.getInstance(this).getProfiles();
         startManagingCursor(c);

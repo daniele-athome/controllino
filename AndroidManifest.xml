@@ -24,8 +24,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ProfileEditor" android:label="@string/prefs_profile_editor"></activity>
-
+        <activity android:name=".ui.ProfileEditor" android:label="@string/prefs_profile_editor"/>
+        <activity android:name=".ui.ServiceEditor" android:label="@string/prefs_service_editor"/>
+        
     </application>
 
 </manifest>

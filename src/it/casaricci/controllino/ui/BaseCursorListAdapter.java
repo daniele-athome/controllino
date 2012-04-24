@@ -42,8 +42,11 @@ public abstract class BaseCursorListAdapter extends CursorAdapter {
         holder.textSummary = (TextView) view.findViewById(mSummaryResource);
         view.setTag(holder);
 
+        createView(holder, view, context, cursor, parent);
         return view;
     }
+
+    public abstract void createView(ViewHolder holder, View view, Context context, Cursor cursor, ViewGroup parent);
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
@@ -56,6 +59,7 @@ public abstract class BaseCursorListAdapter extends CursorAdapter {
     protected final static class ViewHolder {
         public TextView textTitle;
         public TextView textSummary;
+        public View[] viewOthers;
     }
 
 }

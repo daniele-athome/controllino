@@ -36,7 +36,8 @@ public class Configuration extends SQLiteOpenHelper {
         "name TEXT NOT NULL," +
         "version TEXT," +
         "type TEXT NOT NULL," +
-        "command TEXT NOT NULL" +
+        "command TEXT NOT NULL," +
+        "icon TEXT" +
         ")";
 
     // TODO foreign keys
@@ -102,7 +103,22 @@ public class Configuration extends SQLiteOpenHelper {
             new String[] { String.valueOf(id) }, null, null, null);
     }
 
-    public long addService(String name, String version, String type, String command) {
+    public int getServiceUsageCount(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(TABLE_PROFILE_SERVICES, new String[] { "count(*)" },
+            "service_id = ?", new String[] { String.valueOf(id) }, null, null, null);
+        try {
+            if (c.moveToNext())
+                return c.getInt(0);
+        }
+        finally {
+            c.close();
+        }
+
+        return 0;
+    }
+
+    public long addService(String name, String version, String type, String command, String icon) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues(4);
@@ -110,17 +126,32 @@ public class Configuration extends SQLiteOpenHelper {
         values.put("version", version);
         values.put("type", type);
         values.put("command", command);
+        values.put("icon", icon);
 
         return db.insert(TABLE_SERVICES, null, values);
     }
 
-    public void updateService(long id, String name, String version, String type, String command) {
+    public void updateService(long id, String name, String version, String type, String command, String icon) {
         // TODO
     }
 
     public void removeService(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE_SERVICES, "_id = ?", new String[] { String.valueOf(id) });
+        try {
+            db.beginTransaction();
+            String[] args = new String[] { String.valueOf(id) };
+
+            // remove link to profiles
+            db.delete(TABLE_PROFILE_SERVICES, "service_id = ?", args);
+            // remove service
+            db.delete(TABLE_SERVICES, "_id = ?", args);
+
+            // commit!
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
     }
 
     public Cursor getProfiles() {

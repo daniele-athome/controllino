@@ -9,18 +9,29 @@
     <string name="menu_restart">Restart</string>
     <string name="menu_reload">Reload</string>
 
-    <string name="list_services_empty">Use &lt;b&gt;Menu&lt;/b&gt; &gt; &lt;b>Add server&lt;/b&gt; to add new servers.</string>
-
+    <string name="list_servers_empty">Use &lt;b&gt;Menu&lt;/b&gt; &gt; &lt;b>Add server&lt;/b&gt; to add new servers.</string>
+    <string name="list_services_empty">Use &lt;b&gt;Menu&lt;/b&gt; &gt; &lt;b>Add service&lt;/b&gt; to add new services.</string>
+    <string name="list_profiles_empty">Use &lt;b&gt;Menu&lt;/b&gt; &gt; &lt;b>Add profile&lt;/b&gt; to add new profiles.</string>
+    
     <string name="pref_title_services">Services</string>
     <string name="pref_summary_services">Define system services</string>
     <string name="pref_title_profiles">Profiles</string>
     <string name="pref_summary_profiles">Build server templates</string>
 
     <string name="prefs_services">Services</string>
+    <string name="prefs_service_editor">Service editor</string>
     <string name="prefs_profiles">Server profiles</string>
     <string name="prefs_profile_editor">Profile editor</string>
 
     <string name="profile_meta_name">Name</string>
     <string name="profile_meta_osname">OS name</string>
     <string name="profile_meta_osversion">OS version</string>
+
+    <string name="service_field_name">Name</string>
+    <string name="service_field_version">Version</string>
+    <string name="service_field_type">Script type</string>
+    <string name="service_field_command">Script command</string>
+
+    <string name="msg_service_delete_confirm">Service will be deleted.</string>
+    <string name="msg_service_delete_used_warn">Service is currently in use in one or more profiles. It will be removed from profiles where is being used.</string>
 </resources>
