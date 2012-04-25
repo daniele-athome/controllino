@@ -1,6 +1,8 @@
 package it.casaricci.controllino.data;
 
+import it.casaricci.controllino.ui.ProfilesListAdapter;
 import android.database.Cursor;
+
 
 /**
  * Data item for {@link ProfilesListAdapter}.

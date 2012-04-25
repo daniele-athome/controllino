@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
 
 
 /**
@@ -54,7 +55,7 @@ public class Configuration extends SQLiteOpenHelper {
         "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
         "profile_id INTEGER NOT NULL," +
         "name TEXT NOT NULL," +
-        "address TEXT NOT NULL," +
+        "host TEXT NOT NULL," +
         "port INTEGER," +
         "username TEXT NOT NULL," +
         "password TEXT" +
@@ -255,12 +256,32 @@ public class Configuration extends SQLiteOpenHelper {
         return db.query(TABLE_SERVERS, null, null, null, null, null, "name");
     }
 
-    public long addServer(String name, String address, int port, String username, String password, long profileId) {
+    public Cursor getServer(long id, Bundle profile) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(TABLE_SERVERS, null, "_id = ?",
+            new String[] { String.valueOf(id) }, null, null, null);
+
+        // profile data requested
+        if (profile != null) {
+            c.moveToFirst();
+            Cursor pc = getProfile(c.getLong(1));
+            pc.moveToNext();
+            profile.putLong("id", pc.getLong(0));
+            profile.putString("name", pc.getString(1));
+            pc.close();
+
+            // reset cursor
+            c.moveToPosition(-1);
+        }
+        return c;
+    }
+
+    public long addServer(String name, String host, int port, String username, String password, long profileId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues(4);
         values.put("name", name);
-        values.put("address", address);
+        values.put("host", host);
         values.put("port", port);
         values.put("username", username);
         values.put("password", password);
@@ -269,8 +290,18 @@ public class Configuration extends SQLiteOpenHelper {
         return db.insert(TABLE_SERVERS, null, values);
     }
 
-    public void updateServer(long id, String name, String address, int port, String username, String password, long profile) {
-        // TODO
+    public void updateServer(long id, String name, String host, int port, String username, String password, long profileId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues(4);
+        values.put("name", name);
+        values.put("host", host);
+        values.put("port", port);
+        values.put("username", username);
+        values.put("password", password);
+        values.put("profile_id", profileId);
+
+        db.update(TABLE_SERVERS, values, "_id = ?", new String[] { String.valueOf(id) });
     }
 
     public void removeServer(long id) {

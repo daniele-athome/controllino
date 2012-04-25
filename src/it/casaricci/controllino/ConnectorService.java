@@ -21,14 +21,19 @@ public class ConnectorService extends Service {
 	private static final String TAG = "SSHConnector"; //ConnectorService.class.getSimpleName();
 
 	public static final String EXTRA_SERVER = "connection.address";
+	public static final String EXTRA_PORT = "connection.port";
 	public static final String EXTRA_USERNAME = "connection.username";
 	public static final String EXTRA_PASSWORD = "connection.password";
+
+	/** Default SSH port. */
+	public static final int DEFAULT_PORT = 22;
 
 	private final IBinder mBinder = new ConnectorInterface();
 
 	private ConnectorListener mListener;
 
 	private String mServer;
+	private int mPort;
 	private String mUsername;
 	private String mPassword;
 
@@ -44,6 +49,7 @@ public class ConnectorService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		mServer = intent.getStringExtra(EXTRA_SERVER);
+		mPort = intent.getIntExtra(EXTRA_PORT, DEFAULT_PORT);
 		mUsername = intent.getStringExtra(EXTRA_USERNAME);
 		mPassword = intent.getStringExtra(EXTRA_PASSWORD);
 		return START_NOT_STICKY;
@@ -89,7 +95,7 @@ public class ConnectorService extends Service {
 		public void run() {
 			// connect to server
 			try {
-				mSession = mJsch.getSession(mUsername, mServer);
+				mSession = mJsch.getSession(mUsername, mServer, mPort);
 				mSession.setPassword(mPassword);
 
 				// allow new hosts :)

@@ -56,7 +56,7 @@ public class ProfileEditor extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_editor);
+        setContentView(R.layout.list_editor);
 
         mConfig = Configuration.getInstance(this);
         List<RecordInfo> list = new ArrayList<RecordInfo>();

@@ -40,13 +40,13 @@ public class ServiceEditor extends ListActivity {
 
     public static final int RESULT_DELETED = RESULT_FIRST_USER;
 
-    /** The profile metadata adapter. */
+    /** The service editor adapter. */
     private ServiceEditorAdapter mAdapter;
     /** Service Id - if any. */
     private long mServiceId;
     /** Icon resource name - if any. */
     private String mIconResId;
-    /** Dirty profile flag. */
+    /** Dirty service flag. */
     private boolean mDirty;
     /** Configuration instance. */
     private Configuration mConfig;
@@ -55,7 +55,7 @@ public class ServiceEditor extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_editor);
+        setContentView(R.layout.list_editor);
 
         mConfig = Configuration.getInstance(this);
         List<RecordInfo> list = new ArrayList<RecordInfo>();

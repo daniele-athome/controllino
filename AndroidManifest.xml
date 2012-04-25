@@ -26,6 +26,7 @@
         </activity>
         <activity android:name=".ui.ProfileEditor" android:label="@string/prefs_profile_editor"/>
         <activity android:name=".ui.ServiceEditor" android:label="@string/prefs_service_editor"/>
+        <activity android:name=".ui.ServerEditor" android:label="@string/prefs_server_editor"/>
         
     </application>
 

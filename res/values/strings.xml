@@ -22,7 +22,8 @@
     <string name="prefs_service_editor">Service editor</string>
     <string name="prefs_profiles">Server profiles</string>
     <string name="prefs_profile_editor">Profile editor</string>
-
+    <string name="prefs_server_editor">Server editor</string>
+    
     <string name="profile_meta_name">Name</string>
     <string name="profile_meta_osname">OS name</string>
     <string name="profile_meta_osversion">OS version</string>
@@ -34,4 +35,12 @@
 
     <string name="msg_service_delete_confirm">Service will be deleted.</string>
     <string name="msg_service_delete_used_warn">Service is currently in use in one or more profiles. It will be removed from profiles where is being used.</string>
+
+    <string name="server_field_name">Name</string>
+    <string name="server_field_profile">Profile</string>
+    <string name="server_field_address">Host</string>
+    <string name="server_field_port">Port</string>
+    <string name="server_field_username">Username</string>
+    <string name="server_field_password">Password</string>
+
 </resources>
