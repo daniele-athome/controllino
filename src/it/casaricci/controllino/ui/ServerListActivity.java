@@ -2,6 +2,7 @@ package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.Executor;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServerData;
 import android.app.ListActivity;
@@ -31,7 +32,7 @@ import android.widget.Toast;
  * Main activity: the servers list.
  * @author Daniele Ricci
  */
-public class ServerListActivity extends ListActivity implements ConnectorService.ConnectorListener {
+public class ServerListActivity extends ListActivity implements ConnectorService.ConnectorListener, Executor.ExecuteListener {
     public static final int REQUEST_SERVER_EDITOR = 1;
 
     private CursorAdapter mAdapter;
@@ -40,6 +41,18 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     private ProgressDialog mStatus;
     /** Connector service instance. */
     private ConnectorService mConnector;
+    /** Action to be run when connected. */
+    private Runnable mConnectedAction;
+
+    private Runnable mShowStatusAction = new Runnable() {
+        @Override
+        public void run() {
+            mStatus.dismiss();
+            Intent i = new Intent(ServerListActivity.this, StatusActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+        }
+    };
 
     private ConnectorServiceConnection mConnection = new ConnectorServiceConnection();
 
@@ -133,8 +146,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     private static final int MENU_STATUS = 1;
-    private static final int MENU_EDIT = 2;
-    private static final int MENU_DELETE = 3;
+    private static final int MENU_SHUTDOWN = 2;
+    private static final int MENU_REBOOT = 3;
+    private static final int MENU_EDIT = 4;
+    private static final int MENU_DELETE = 5;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -144,6 +159,8 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         menu.setHeaderTitle(data.getName());
         // TODO i18n
         menu.add(Menu.NONE, MENU_STATUS, MENU_STATUS, "Show status");
+        menu.add(Menu.NONE, MENU_SHUTDOWN, MENU_SHUTDOWN, "Shutdown");
+        menu.add(Menu.NONE, MENU_REBOOT, MENU_REBOOT, "Reboot");
         menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit server");
         menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete server");
     }
@@ -156,11 +173,37 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
         switch (item.getItemId()) {
             case MENU_STATUS:
-                showStatus(data);
+                connect(data, mShowStatusAction);
                 return true;
+
+            case MENU_SHUTDOWN:
+                connect(data, new Runnable() {
+                    @Override
+                    public void run() {
+                        Executor exec = new Executor(mConnector, "shutdown -h -P now");
+                        exec.setListener(ServerListActivity.this);
+                        exec.start();
+                    }
+                // TODO i18n
+                }, "Shutting down...");
+                return true;
+
+            case MENU_REBOOT:
+                connect(data, new Runnable() {
+                    @Override
+                    public void run() {
+                        Executor exec = new Executor(mConnector, "shutdown -r now");
+                        exec.setListener(ServerListActivity.this);
+                        exec.start();
+                    }
+                // TODO i18n
+                }, "Rebooting...");
+                return true;
+
             case MENU_EDIT:
                 editServer(data);
                 return true;
+
             case MENU_DELETE:
                 // TODO delete server
                 return true;
@@ -186,14 +229,20 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
-        showStatus((ServerData) mAdapter.getItem(position));
+        connect((ServerData) mAdapter.getItem(position), mShowStatusAction);
     }
 
-    private void showStatus(ServerData item) {
+    private void connect(ServerData item, Runnable action) {
         // TODO i18n
-        mStatus.setMessage("Connecting...");
+        connect(item, action, "Connecting...");
+    }
+
+    private void connect(ServerData item, Runnable action, String connectingStatus) {
+        mStatus.setMessage(connectingStatus);
         mStatus.setOnCancelListener(mAbortConnectionListener);
         mStatus.show();
+
+        mConnectedAction = action;
 
         // start connector
         Intent i = new Intent(this, ConnectorService.class);
@@ -219,10 +268,8 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
     @Override
     public void connected() {
-        mStatus.dismiss();
-        Intent i = new Intent(this, StatusActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(i);
+        if (mConnectedAction != null)
+            mConnectedAction.run();
     }
 
     @Override
@@ -246,6 +293,16 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 Toast.makeText(ServerListActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onExecuteFinish(Executor exec, int exitStatus) {
+        mStatus.dismiss();
+    }
+
+    @Override
+    public void onError(Executor exec, Throwable e) {
+        // TODO
     }
 
 }
