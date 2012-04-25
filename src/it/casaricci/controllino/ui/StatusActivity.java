@@ -66,10 +66,7 @@ public class StatusActivity extends ListActivity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mConnector = ((ConnectorService.ConnectorInterface) service).getService();
 			if (!mConnector.isConnected()) {
-				// go back to login
-				startActivity(new Intent(StatusActivity.this, LoginActivity.class));
-				finish();
-				return;
+			    // TODO reconnection??
 			}
 			mAdapter.update(mConnector);
 		}
@@ -114,13 +111,6 @@ public class StatusActivity extends ListActivity {
 	    mStatus = new ProgressDialog(this);
 	    mStatus.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	    */
-
-		// bind to connector
-		if (!bindService(new Intent(this, ConnectorService.class),
-				mConnection, BIND_AUTO_CREATE)) {
-			error("Unable to bind to connector service.");
-			finish();
-		}
 	}
 
 	private static final int MENU_START = 1;
@@ -175,10 +165,21 @@ public class StatusActivity extends ListActivity {
         return super.onContextItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // bind to connector
+        if (!bindService(new Intent(this, ConnectorService.class),
+                mConnection, BIND_AUTO_CREATE)) {
+            error("Unable to bind to connector service.");
+            finish();
+        }
+    }
+
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mConnection.disconnect();
+	protected void onStop() {
+	    super.onStop();
+        mConnection.disconnect();
 	}
 
 	/** No search here. */
@@ -199,12 +200,6 @@ public class StatusActivity extends ListActivity {
         switch (item.getItemId()) {
         case R.id.status_update:
             mAdapter.update(mConnector);
-            return true;
-        case R.id.disconnect:
-            mConnection.disconnect();
-            stopService(new Intent(this, ConnectorService.class));
-            // exit the activity
-            finish();
             return true;
         default:
             return super.onOptionsItemSelected(item);

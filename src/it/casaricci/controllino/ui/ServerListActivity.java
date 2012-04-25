@@ -197,6 +197,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
         // start connector
         Intent i = new Intent(this, ConnectorService.class);
+        i.putExtra(ConnectorService.EXTRA_PROFILE_ID, item.getProfileId());
         i.putExtra(ConnectorService.EXTRA_HOST, item.getHost());
         i.putExtra(ConnectorService.EXTRA_PORT, item.getPort());
         i.putExtra(ConnectorService.EXTRA_USERNAME, item.getUsername());
