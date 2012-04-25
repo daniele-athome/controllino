@@ -147,7 +147,7 @@ public class LoginActivity extends Activity implements ConnectorService.Connecto
 
 	    // start connector
 		Intent i = new Intent(this, ConnectorService.class);
-		i.putExtra(ConnectorService.EXTRA_SERVER, server);
+		i.putExtra(ConnectorService.EXTRA_HOST, server);
 		i.putExtra(ConnectorService.EXTRA_USERNAME, username);
 		i.putExtra(ConnectorService.EXTRA_PASSWORD, password);
 		startService(i);

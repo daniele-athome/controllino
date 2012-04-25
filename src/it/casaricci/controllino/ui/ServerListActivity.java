@@ -190,14 +190,14 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     private void showStatus(ServerData item) {
-        // status: connecting
+        // TODO i18n
         mStatus.setMessage("Connecting...");
         mStatus.setOnCancelListener(mAbortConnectionListener);
         mStatus.show();
 
         // start connector
         Intent i = new Intent(this, ConnectorService.class);
-        i.putExtra(ConnectorService.EXTRA_SERVER, item.getHost());
+        i.putExtra(ConnectorService.EXTRA_HOST, item.getHost());
         i.putExtra(ConnectorService.EXTRA_PORT, item.getPort());
         i.putExtra(ConnectorService.EXTRA_USERNAME, item.getUsername());
         i.putExtra(ConnectorService.EXTRA_PASSWORD, item.getPassword());
@@ -206,6 +206,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         // bind to connector
         if (!bindService(new Intent(this, ConnectorService.class),
                 mConnection, 0)) {
+            // TODO i18n
             error("Unable to bind to connector service.");
             return;
         }

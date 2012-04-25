@@ -20,7 +20,8 @@ import com.jcraft.jsch.Session;
 public class ConnectorService extends Service {
 	private static final String TAG = "SSHConnector"; //ConnectorService.class.getSimpleName();
 
-	public static final String EXTRA_SERVER = "connection.address";
+	public static final String EXTRA_PROFILE_ID = "connection.profileId";
+	public static final String EXTRA_HOST = "connection.address";
 	public static final String EXTRA_PORT = "connection.port";
 	public static final String EXTRA_USERNAME = "connection.username";
 	public static final String EXTRA_PASSWORD = "connection.password";
@@ -36,6 +37,7 @@ public class ConnectorService extends Service {
 	private int mPort;
 	private String mUsername;
 	private String mPassword;
+	private long mProfileId;
 
 	private Connector mConnector;
 	private JSch mJsch = new JSch();
@@ -48,7 +50,8 @@ public class ConnectorService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		mServer = intent.getStringExtra(EXTRA_SERVER);
+	    mProfileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
+		mServer = intent.getStringExtra(EXTRA_HOST);
 		mPort = intent.getIntExtra(EXTRA_PORT, DEFAULT_PORT);
 		mUsername = intent.getStringExtra(EXTRA_USERNAME);
 		mPassword = intent.getStringExtra(EXTRA_PASSWORD);
@@ -88,6 +91,10 @@ public class ConnectorService extends Service {
 
 	public Session getSession() {
 	    return mSession;
+	}
+
+	public long getProfileId() {
+	    return mProfileId;
 	}
 
 	private final class Connector extends Thread {

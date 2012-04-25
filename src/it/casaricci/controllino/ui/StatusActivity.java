@@ -22,6 +22,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+/**
+ * Server status monitoring activity.
+ * @author Daniele Ricci
+ */
 public class StatusActivity extends ListActivity {
 
     /** The list view. */

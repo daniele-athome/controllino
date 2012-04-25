@@ -60,6 +60,8 @@ public class ServiceStatusListAdapter extends BaseAdapter {
 	public void update(ConnectorService connector) {
 		mConnector = connector;
 
+		// TODO get services from connector's profile
+
 		// TODO hard-coded list :D
 		if (mList.size() == 0) {
     		mList.add(new DummyController(connector));
