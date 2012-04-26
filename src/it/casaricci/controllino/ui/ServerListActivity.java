@@ -35,6 +35,7 @@ import android.widget.Toast;
  */
 public class ServerListActivity extends ListActivity implements ConnectorService.ConnectorListener, Executor.ExecuteListener {
     public static final int REQUEST_SERVER_EDITOR = 1;
+    public static final int REQUEST_PROFILE_EDITOR = 2;
 
     private CursorAdapter mAdapter;
     private Configuration mConfig;
@@ -156,7 +157,8 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     private static final int MENU_SHUTDOWN = 2;
     private static final int MENU_REBOOT = 3;
     private static final int MENU_EDIT = 4;
-    private static final int MENU_DELETE = 5;
+    private static final int MENU_EDIT_PROFILE = 5;
+    private static final int MENU_DELETE = 6;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -169,6 +171,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         menu.add(Menu.NONE, MENU_SHUTDOWN, MENU_SHUTDOWN, "Shutdown");
         menu.add(Menu.NONE, MENU_REBOOT, MENU_REBOOT, "Reboot");
         menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit server");
+        menu.add(Menu.NONE, MENU_EDIT_PROFILE, MENU_EDIT_PROFILE, "Edit server profile");
         menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete server");
     }
 
@@ -212,6 +215,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 editServer(data);
                 return true;
 
+            case MENU_EDIT_PROFILE:
+                editProfile(data.getProfileId());
+                return true;
+
             case MENU_DELETE:
                 // delete server
                 delete(data.getId());
@@ -231,6 +238,18 @@ public class ServerListActivity extends ListActivity implements ConnectorService
             else if (resultCode == ServerEditor.RESULT_DELETED) {
                 // TODO i18n
                 Toast.makeText(this, "Server deleted.", Toast.LENGTH_SHORT).show();
+            }
+            // onResume will refresh()
+        }
+
+        if (requestCode == REQUEST_PROFILE_EDITOR) {
+            if (resultCode == RESULT_OK) {
+                // TODO i18n
+                Toast.makeText(this, "Profile saved.", Toast.LENGTH_SHORT).show();
+            }
+            else if (resultCode == ProfileEditor.RESULT_DELETED) {
+                // TODO i18n
+                Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
             }
             // onResume will refresh()
         }
@@ -278,6 +297,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         else
             i = ServerEditor.fromServerId(this, item.getId());
         startActivityForResult(i, REQUEST_SERVER_EDITOR);
+    }
+
+    private void editProfile(long id) {
+        startActivityForResult(ProfileEditor.fromProfileId(this, id), REQUEST_PROFILE_EDITOR);
     }
 
     private void delete(final long id) {

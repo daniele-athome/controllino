@@ -104,7 +104,10 @@ public class ServicesPreferences extends ListActivity {
     /** Builtin Service templates. */
     private static final String[][] serviceTemplates = {
         { "Apache HTTP server", "2.x", "sysvinit", "apache2", "ctrl_apache" },
-        { "MySQL server", "5.x", "sysvinit", "mysql", "ctrl_mysql" }
+        { "MySQL server", "5.x", "sysvinit", "mysql", "ctrl_mysql" },
+        { "Postfix server", "2.x", "sysvinit", "postfix", "ctrl_postfix" },
+        { "Deluge torrent daemon", "1.3.x", "sysvinit", "deluge-daemon", "ctrl_deluge" },
+        { "Secure Shell", "", "sysvinit", "ssh", "ctrl_ssh" }
     };
 
     public void newService() {
