@@ -343,6 +343,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
             sb.append(": ")
             .append(e.getMessage());
         error(sb.toString());
+        mConnection.disconnect();
     }
 
     @Override
