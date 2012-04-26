@@ -166,6 +166,21 @@ public class Configuration extends SQLiteOpenHelper {
             new String[] { String.valueOf(id) }, null, null, null);
     }
 
+    public int getProfileUsageCount(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(TABLE_SERVERS, new String[] { "count(*)" },
+            "profile_id = ?", new String[] { String.valueOf(id) }, null, null, null);
+        try {
+            if (c.moveToNext())
+                return c.getInt(0);
+        }
+        finally {
+            c.close();
+        }
+
+        return 0;
+    }
+
     public long addProfile(String name, String osName, String osVersion, long[] services) {
         SQLiteDatabase db = getWritableDatabase();
         try {
@@ -265,9 +280,10 @@ public class Configuration extends SQLiteOpenHelper {
         if (profile != null) {
             c.moveToFirst();
             Cursor pc = getProfile(c.getLong(1));
-            pc.moveToNext();
-            profile.putLong("id", pc.getLong(0));
-            profile.putString("name", pc.getString(1));
+            if (pc.moveToFirst()) {
+                profile.putLong("id", pc.getLong(0));
+                profile.putString("name", pc.getString(1));
+            }
             pc.close();
 
             // reset cursor

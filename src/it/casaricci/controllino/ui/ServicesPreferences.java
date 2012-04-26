@@ -28,6 +28,7 @@ public class ServicesPreferences extends ListActivity {
     public static final int REQUEST_SERVICE_EDITOR = 1;
 
     private CursorAdapter mAdapter;
+    private Configuration mConfig;
 
     /** Called when the activity is first created. */
     @Override
@@ -37,13 +38,18 @@ public class ServicesPreferences extends ListActivity {
         TextView text = (TextView) findViewById(android.R.id.empty);
         text.setText(Html.fromHtml(getString(R.string.list_services_empty)));
 
-        Cursor c = Configuration.getInstance(this).getServices();
-        startManagingCursor(c);
-
+        mConfig = Configuration.getInstance(this);
         mAdapter = new ServicesListAdapter(this,
             R.layout.preference_icon,
-            android.R.id.title, android.R.id.summary, android.R.id.icon, c);
+            android.R.id.title, android.R.id.summary, android.R.id.icon, null);
         setListAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // reload data
+        refresh();
     }
 
     @Override
@@ -76,7 +82,7 @@ public class ServicesPreferences extends ListActivity {
                 // TODO i18n
                 Toast.makeText(this, "Service deleted.", Toast.LENGTH_SHORT).show();
             }
-            mAdapter.notifyDataSetChanged();
+            // onResume will refresh()
         }
     }
 
@@ -84,6 +90,15 @@ public class ServicesPreferences extends ListActivity {
     protected void onListItemClick(ListView list, View view, int position, long id) {
         ServiceData item = (ServiceData) list.getItemAtPosition(position);
         startActivityForResult(ServiceEditor.fromServiceId(this, item.getId()), REQUEST_SERVICE_EDITOR);
+    }
+
+    private void refresh() {
+        Cursor old = mAdapter.getCursor();
+        Cursor c = mConfig.getServices();
+        startManagingCursor(c);
+        mAdapter.changeCursor(c);
+        if (old != null)
+            stopManagingCursor(old);
     }
 
     /** Builtin Service templates. */

@@ -26,6 +26,7 @@ public class ProfilesPreferences extends ListActivity {
     public static final int REQUEST_PROFILE_EDITOR = 1;
 
     private CursorAdapter mAdapter;
+    private Configuration mConfig;
 
     /** Called when the activity is first created. */
     @Override
@@ -35,13 +36,18 @@ public class ProfilesPreferences extends ListActivity {
         TextView text = (TextView) findViewById(android.R.id.empty);
         text.setText(Html.fromHtml(getString(R.string.list_profiles_empty)));
 
-        Cursor c = Configuration.getInstance(this).getProfiles();
-        startManagingCursor(c);
-
+        mConfig = Configuration.getInstance(this);
         mAdapter = new ProfilesListAdapter(this,
             R.layout.preference,
-            android.R.id.title, android.R.id.summary, c);
+            android.R.id.title, android.R.id.summary, null);
         setListAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // reload data
+        refresh();
     }
 
     @Override
@@ -74,7 +80,7 @@ public class ProfilesPreferences extends ListActivity {
                 // TODO i18n
                 Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
             }
-            mAdapter.notifyDataSetChanged();
+            // onResume will refresh()
         }
     }
 
@@ -82,6 +88,15 @@ public class ProfilesPreferences extends ListActivity {
     protected void onListItemClick(ListView list, View view, int position, long id) {
         ServerProfileData item = (ServerProfileData) list.getItemAtPosition(position);
         startActivityForResult(ProfileEditor.fromProfileId(this, item.getId()), REQUEST_PROFILE_EDITOR);
+    }
+
+    private void refresh() {
+        Cursor old = mAdapter.getCursor();
+        Cursor c = mConfig.getProfiles();
+        startManagingCursor(c);
+        mAdapter.changeCursor(c);
+        if (old != null)
+            stopManagingCursor(old);
     }
 
 }

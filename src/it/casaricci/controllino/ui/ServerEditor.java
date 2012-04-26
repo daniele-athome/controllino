@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 /**
@@ -126,21 +128,25 @@ public class ServerEditor extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        end(RESULT_OK, true, false);
-        finish();
+        if (end(RESULT_OK, true, false))
+            finish();
     }
 
-    private void end(int resultCode, boolean save, boolean ignoreDirty) {
+    private boolean end(int resultCode, boolean save, boolean ignoreDirty) {
+        boolean exit = true;
         if (ignoreDirty ? true : mDirty) {
             if (save)
-                save();
+                exit = save();
             setResult(resultCode);
         }
+
+        return exit;
     }
 
     private void delete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
+            // TODO i18n
             .setTitle("Delete server")
             .setMessage("Server will be deleted.")
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -156,8 +162,11 @@ public class ServerEditor extends ListActivity {
             .show();
     }
 
-    /** Saves the server the user is editing. */
-    private void save() {
+    /**
+     * Saves the server the user is editing.
+     * @return true if we can leave the activity, false to stop it.
+     */
+    private boolean save() {
         // retrieve records from adapter
         RecordInfo name = mAdapter.getItem(0);
         RecordInfo profile = mAdapter.getItem(1);
@@ -165,6 +174,29 @@ public class ServerEditor extends ListActivity {
         RecordInfo port = mAdapter.getItem(3);
         RecordInfo username = mAdapter.getItem(4);
         RecordInfo password = mAdapter.getItem(5);
+
+        // no profile selected - warn the user about that
+        if (profile.getDataId() <= 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder
+                // TODO i18n
+                .setTitle("Server editor")
+                .setMessage("No profile selected. Server will be discarded.")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mServerId > 0)
+                            mConfig.removeServer(mServerId);
+                        end(RESULT_DELETED, false, true);
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create()
+                .show();
+
+            return false;
+        }
 
         // existing server
         if (mServerId > 0) {
@@ -178,6 +210,8 @@ public class ServerEditor extends ListActivity {
                 (name.getData(), host.getData(), Integer.parseInt(port.getData()),
                     username.getData(), password.getData(), profile.getDataId());
         }
+
+        return true;
     }
 
     @Override
@@ -194,7 +228,16 @@ public class ServerEditor extends ListActivity {
 
         if (info.getType() == RecordInfo.TYPE_SERVER_PROFILE) {
             Cursor c = mConfig.getProfiles();
-            final String[] items = new String[c.getCount()];
+            int count = c.getCount();
+            if (count <= 0) {
+                // TODO i18n
+                Toast.makeText(this,
+                    "No profiles found. Please configure a profile in application settings first.",
+                    Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            final String[] items = new String[count];
             final long[] itemsId = new long[items.length];
             int i = 0;
             while (c.moveToNext()) {
@@ -250,6 +293,7 @@ public class ServerEditor extends ListActivity {
                     break;
                 case RecordInfo.TYPE_PASSWORD:
                     txt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    txt.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     break;
                 case RecordInfo.TYPE_NUMBER:
                     txt.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);

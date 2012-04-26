@@ -34,8 +34,10 @@
     <string name="service_field_command">Script command</string>
 
     <string name="msg_service_delete_confirm">Service will be deleted.</string>
-    <string name="msg_service_delete_used_warn">Service is currently in use in one or more profiles. It will be removed from profiles where is being used.</string>
-
+    <string name="msg_service_delete_used_warn">Service is linked to one or more profiles. It will be removed from profiles where is being used.</string>
+    <string name="msg_profile_delete_used_warn">Profile is currently used by one or more servers. Please delete the servers or link them to other profiles first.</string>
+    <string name="msg_profile_delete_confirm">Profile will be deleted.</string>
+    
     <string name="server_field_name">Name</string>
     <string name="server_field_profile">Profile</string>
     <string name="server_field_address">Host</string>

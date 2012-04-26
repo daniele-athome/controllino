@@ -5,6 +5,7 @@ import it.casaricci.controllino.ConnectorService;
 import it.casaricci.controllino.Executor;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServerData;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -36,6 +37,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     public static final int REQUEST_SERVER_EDITOR = 1;
 
     private CursorAdapter mAdapter;
+    private Configuration mConfig;
 
     /** Reusable status dialog. */
     private ProgressDialog mStatus;
@@ -96,12 +98,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         TextView text = (TextView) findViewById(android.R.id.empty);
         text.setText(Html.fromHtml(getString(R.string.list_servers_empty)));
 
-        Cursor c = Configuration.getInstance(this).getServers();
-        startManagingCursor(c);
-
+        mConfig = Configuration.getInstance(this);
         mAdapter = new ServerListAdapter(this,
             R.layout.preference,
-            android.R.id.title, android.R.id.summary, c);
+            android.R.id.title, android.R.id.summary, null);
         setListAdapter(mAdapter);
         registerForContextMenu(getListView());
 
@@ -113,6 +113,13 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     @Override
     public boolean onSearchRequested() {
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // reload data
+        refresh();
     }
 
     @Override
@@ -133,7 +140,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         switch (item.getItemId()) {
             case R.id.menu_add_server:
                 // add server
-                startActivity(new Intent(this, ServerEditor.class));
+                editServer(null);
                 return true;
 
             case R.id.menu_settings:
@@ -201,11 +208,13 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 return true;
 
             case MENU_EDIT:
+                // edit server
                 editServer(data);
                 return true;
 
             case MENU_DELETE:
-                // TODO delete server
+                // delete server
+                delete(data.getId());
                 return true;
         }
 
@@ -223,7 +232,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 // TODO i18n
                 Toast.makeText(this, "Server deleted.", Toast.LENGTH_SHORT).show();
             }
-            mAdapter.notifyDataSetChanged();
+            // onResume will refresh()
         }
     }
 
@@ -263,7 +272,39 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     private void editServer(ServerData item) {
-        startActivityForResult(ServerEditor.fromServerId(this, item.getId()), REQUEST_SERVER_EDITOR);
+        Intent i;
+        if (item == null)
+            i = ServerEditor.newEditor(this);
+        else
+            i = ServerEditor.fromServerId(this, item.getId());
+        startActivityForResult(i, REQUEST_SERVER_EDITOR);
+    }
+
+    private void delete(final long id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+            // TODO i18n
+            .setTitle("Delete server")
+            .setMessage("Server will be deleted.")
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mConfig.removeServer(id);
+                    refresh();
+                }
+            })
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
+            .show();
+    }
+
+    private void refresh() {
+        Cursor old = mAdapter.getCursor();
+        Cursor c = mConfig.getServers();
+        startManagingCursor(c);
+        mAdapter.changeCursor(c);
+        if (old != null)
+            stopManagingCursor(old);
     }
 
     @Override

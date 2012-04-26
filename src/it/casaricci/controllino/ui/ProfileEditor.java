@@ -139,7 +139,7 @@ public class ProfileEditor extends ListActivity {
 
                 if (count <= 0) {
                     // TODO i18n
-                    Toast.makeText(this, "No services defined.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "No services found. Please configure system services in application settings first.", Toast.LENGTH_LONG).show();
                 }
                 else {
                     CharSequence[] items = new CharSequence[c.getCount()];
@@ -181,12 +181,7 @@ public class ProfileEditor extends ListActivity {
 
             case R.id.menu_delete_profile:
                 // delete profile (upon confirmation)
-                // TODO ask confirmation
-                // TODO check if profile is used by some server
-                mConfig.removeProfile(mProfileId);
-                end(RESULT_DELETED, false, true);
-                finish();
-
+                delete();
                 return true;
 
             case R.id.menu_discard_profile:
@@ -234,6 +229,38 @@ public class ProfileEditor extends ListActivity {
                 (name.getData(), osName.getData(), osVersion.getData(),
                     ServiceData.toIdList(mServicesList));
         }
+    }
+
+    private void delete() {
+        // check if this profile is being used by a server
+        int msgId;
+        boolean used = (mConfig.getProfileUsageCount(mProfileId) > 0);
+        if (used)
+            msgId = R.string.msg_profile_delete_used_warn;
+        else
+            msgId = R.string.msg_profile_delete_confirm;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+            .setTitle("Delete profile")
+            .setMessage(msgId);
+
+        if (!used) {
+            builder
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mConfig.removeProfile(mProfileId);
+                        end(RESULT_DELETED, false, true);
+                        finish();
+                    }
+                });
+        }
+
+        builder
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
+            .show();
     }
 
     @Override

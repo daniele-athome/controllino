@@ -68,8 +68,16 @@ public abstract class RecordEditorAdapter extends ArrayAdapter<RecordInfo> {
         }
 
         RecordInfo item = getItem(position);
+        CharSequence display;
+        // hide password
+        if (item.getType() == RecordInfo.TYPE_PASSWORD)
+            // TODO i18n
+            display = "(hidden)";
+        else
+            display = item.getData();
+
         holder.textTitle.setText(mContext.getString(item.getResourceId()));
-        holder.textSummary.setText(item.getData());
+        holder.textSummary.setText(display);
 
         return view;
     }
