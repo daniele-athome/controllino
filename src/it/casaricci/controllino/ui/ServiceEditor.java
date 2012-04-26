@@ -146,7 +146,7 @@ public class ServiceEditor extends ListActivity {
     @Override
     public void onBackPressed() {
         end(RESULT_OK, true, false);
-        super.onBackPressed();
+        finish();
     }
 
     private void end(int resultCode, boolean save, boolean ignoreDirty) {
