@@ -3,6 +3,8 @@ package it.casaricci.controllino.controller;
 import it.casaricci.controllino.ConnectorService;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -15,6 +17,11 @@ import com.jcraft.jsch.Session;
  * @author Daniele Ricci
  */
 public abstract class ShellController extends BaseController {
+    public static final Map<String, Class<? extends ShellController>> scriptTypes;
+    static {
+        scriptTypes = new HashMap<String, Class<? extends ShellController>>();
+        scriptTypes.put("sysvinit", DefaultSysVInitController.class);
+    }
 
     private Executor mExecutor;
     private ShellExecuteListener mShellExecuteListener;
@@ -106,5 +113,8 @@ public abstract class ShellController extends BaseController {
             mExecutor.start();
         }
     }
+
+    /** Returns the script type used by this controller. */
+    public abstract String getScriptType();
 
 }

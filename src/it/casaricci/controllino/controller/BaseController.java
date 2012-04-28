@@ -2,6 +2,9 @@ package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * The basic controller interface.

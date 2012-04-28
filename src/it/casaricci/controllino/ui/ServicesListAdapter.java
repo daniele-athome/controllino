@@ -37,7 +37,26 @@ public class ServicesListAdapter extends BaseCursorListAdapter {
     public void bindData(BaseCursorListAdapter.ViewHolder holder, Context context, Cursor cursor) {
         ServiceData item = ServiceData.fromCursor(cursor);
         holder.textTitle.setText(item.getName() + " " + item.getVersion());
-        holder.textSummary.setText(item.getType());
+
+        // service type
+        int stringId = 0;
+        CharSequence displayType;
+        try {
+            Field _stringId = R.string.class.getField("script_" + item.getType());
+            stringId = _stringId.getInt(null);
+        }
+        catch (Exception e) {
+            // ignore
+        }
+
+        if (stringId > 0)
+            displayType = context.getString(stringId);
+        else
+            displayType = item.getType();
+
+        holder.textSummary.setText(displayType);
+
+        // service icon
         int iconId = 0;
         try {
             Field _iconId = R.drawable.class.getField(item.getIcon());

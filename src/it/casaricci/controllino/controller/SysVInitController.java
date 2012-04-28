@@ -79,4 +79,8 @@ public abstract class SysVInitController extends ShellController {
         executeInitScript("reload");
     }
 
+    public String getScriptType() {
+        return "sysvinit";
+    }
+
 }

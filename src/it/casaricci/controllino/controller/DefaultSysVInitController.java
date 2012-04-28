@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 public class DefaultSysVInitController extends SysVInitController {
     private final ServiceData mService;
     private UpdateShellListener mUpdateListener = new UpdateShellListener();
+    private StartStopShellListener mStartStopListener = new StartStopShellListener(mUpdateListener);
 
     public DefaultSysVInitController(ConnectorService connector, ServiceData service) {
         super(connector, service.getCommand());
@@ -71,22 +72,22 @@ public class DefaultSysVInitController extends SysVInitController {
 
     @Override
     public void start() {
-        start(new StartStopShellListener(mUpdateListener));
+        start(mStartStopListener);
     }
 
     @Override
     public void stop() {
-        stop(new StartStopShellListener(mUpdateListener));
+        stop(mStartStopListener);
     }
 
     @Override
     public void restart() {
-        restart(new StartStopShellListener(mUpdateListener));
+        restart(mStartStopListener);
     }
 
     @Override
     public void reload() {
-        reload(new StartStopShellListener(mUpdateListener));
+        reload(mStartStopListener);
     }
 
 }

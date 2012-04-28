@@ -6,7 +6,7 @@ public class RecordInfo {
     public static final int TYPE_TEXT = 1;
     /** ListView dialog. */
     public static final int TYPE_LIST = 2;
-    /** ListView for choosing a server profile. */
+    /** Server profile selector. */
     public static final int TYPE_SERVER_PROFILE = 3;
     /** Username text. */
     public static final int TYPE_USERNAME = 4;
@@ -16,6 +16,8 @@ public class RecordInfo {
     public static final int TYPE_NUMBER = 6;
     /** Host address or URL. */
     public static final int TYPE_ADDRESS_URL = 7;
+    /** Service type selector. */
+    public static final int TYPE_SCRIPT_TYPE = 8;
 
     /** Default record type. */
     public static final int TYPE_DEFAULT = TYPE_TEXT;

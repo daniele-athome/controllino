@@ -2,10 +2,13 @@ package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.R;
+import it.casaricci.controllino.controller.ShellController;
 import it.casaricci.controllino.data.RecordInfo;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -69,7 +72,7 @@ public class ServiceEditor extends ListActivity {
             c.moveToNext();
             list.add(new RecordInfo("name", c.getString(1), R.string.service_field_name));
             list.add(new RecordInfo("version", c.getString(2), R.string.service_field_version));
-            list.add(new RecordInfo("type", c.getString(3), R.string.service_field_type));
+            list.add(new RecordInfo("type", c.getString(3), R.string.service_field_type, RecordInfo.TYPE_SCRIPT_TYPE));
             list.add(new RecordInfo("command", c.getString(4), R.string.service_field_command));
             mIconResId = c.getString(4);
             c.close();
@@ -212,34 +215,85 @@ public class ServiceEditor extends ListActivity {
             editRecord((RecordInfo) item);
     }
 
+    private final static String[] scriptTypes = new String[ShellController.scriptTypes.size()];
+    private static String[] scriptTypesNames;
+    static {
+        int i = 0;
+        for (Map.Entry<String, Class<? extends ShellController>> entry :
+            ShellController.scriptTypes.entrySet()) {
+            scriptTypes[i++] = entry.getKey();
+        }
+    }
+
     private void editRecord(final RecordInfo info) {
         mDirty = true;
-        LayoutInflater inflater = getLayoutInflater();
-        final View view = inflater.inflate(R.layout.edittext_dialog, null);
-        final EditText txt = (EditText) view.findViewById(R.id.textinput);
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == Dialog.BUTTON_POSITIVE) {
-                    String text = txt.getText().toString();
-
-                    info.setData(text.trim());
-                    // invalidate ListView
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-            .setTitle(info.getResourceId())
-            .setPositiveButton(android.R.string.ok, listener)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setView(view);
+            .setTitle(info.getResourceId());
 
-        txt.setText(info.getData());
-        txt.setSelection(txt.getText().length());
-        txt.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        if (info.getType() == RecordInfo.TYPE_SCRIPT_TYPE) {
+            if (scriptTypesNames == null) {
+                scriptTypesNames = new String[scriptTypes.length];
+                int i = 0;
+                for (Map.Entry<String, Class<? extends ShellController>> entry :
+                            ShellController.scriptTypes.entrySet()) {
+
+                    int stringId = 0;
+                    try {
+                        Field _stringId = R.string.class.getField("script_" + entry.getKey());
+                        stringId = _stringId.getInt(null);
+                    }
+                    catch (Exception e) {
+                        // ignore
+                    }
+
+                    if (stringId > 0)
+                        scriptTypesNames[i] = getString(stringId);
+                    else
+                        scriptTypesNames[i] = entry.getKey();
+
+                    i++;
+                }
+            }
+
+            builder
+                .setItems(scriptTypesNames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        info.setData(scriptTypes[which]);
+                        // invalidate ListView
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+        }
+        else {
+            LayoutInflater inflater = getLayoutInflater();
+            final View view = inflater.inflate(R.layout.edittext_dialog, null);
+            final EditText txt = (EditText) view.findViewById(R.id.textinput);
+
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == Dialog.BUTTON_POSITIVE) {
+                        String text = txt.getText().toString();
+
+                        info.setData(text.trim());
+                        // invalidate ListView
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            };
+            builder
+                .setPositiveButton(android.R.string.ok, listener)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setView(view);
+
+            txt.setText(info.getData());
+            txt.setSelection(txt.getText().length());
+            txt.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        }
+
         final Dialog dialog = builder.create();
         dialog.show();
     }

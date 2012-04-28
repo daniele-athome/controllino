@@ -3,6 +3,7 @@ package it.casaricci.controllino.ui;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.RecordInfo;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import android.content.Context;
@@ -70,9 +71,25 @@ public abstract class RecordEditorAdapter extends ArrayAdapter<RecordInfo> {
         RecordInfo item = getItem(position);
         CharSequence display;
         // hide password
-        if (item.getType() == RecordInfo.TYPE_PASSWORD)
-            // TODO i18n
-            display = "(hidden)";
+        if (item.getType() == RecordInfo.TYPE_PASSWORD) {
+            display = "";
+            holder.textSummary.setVisibility(View.GONE);
+        }
+        else if (item.getType() == RecordInfo.TYPE_SCRIPT_TYPE) {
+            int stringId = 0;
+            try {
+                Field _stringId = R.string.class.getField("script_" + item.getData());
+                stringId = _stringId.getInt(null);
+            }
+            catch (Exception e) {
+                // ignore
+            }
+
+            if (stringId > 0)
+                display = mContext.getString(stringId);
+            else
+                display = item.getData();
+        }
         else
             display = item.getData();
 
