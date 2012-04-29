@@ -1,5 +1,8 @@
 package it.casaricci.controllino;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import android.app.Service;
@@ -29,19 +32,11 @@ public class ConnectorService extends Service {
 	/** Default SSH port. */
 	public static final int DEFAULT_PORT = 22;
 
-	private final IBinder mBinder = new ConnectorInterface();
+	/** Connections table. */
+	private Map<InetSocketAddress, ConnectorInterface> mConnections =
+	    new HashMap<InetSocketAddress, ConnectorInterface>(1);
 
-	private ConnectorListener mListener;
-
-	private String mServer;
-	private int mPort;
-	private String mUsername;
-	private String mPassword;
-	private long mProfileId;
-
-	private Connector mConnector;
 	private JSch mJsch = new JSch();
-	private Session mSession;
 
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -50,17 +45,30 @@ public class ConnectorService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-	    mProfileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
-		mServer = intent.getStringExtra(EXTRA_HOST);
-		mPort = intent.getIntExtra(EXTRA_PORT, DEFAULT_PORT);
-		mUsername = intent.getStringExtra(EXTRA_USERNAME);
-		mPassword = intent.getStringExtra(EXTRA_PASSWORD);
 		return START_NOT_STICKY;
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return mBinder;
+        String host = intent.getStringExtra(EXTRA_HOST);
+        int port = intent.getIntExtra(EXTRA_PORT, DEFAULT_PORT);
+
+        Log.v(TAG, "connection request to " + host + ":" + port);
+
+        InetSocketAddress addr = new InetSocketAddress(host, port);
+        ConnectorInterface conn = mConnections.get(addr);
+        if (conn == null) {
+            Log.v(TAG, "creating new instance for " + host + ":" + port);
+            conn = new ConnectorInterface();
+            conn.host = host;
+            conn.port = port;
+            conn.profileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
+            conn.username = intent.getStringExtra(EXTRA_USERNAME);
+            conn.password = intent.getStringExtra(EXTRA_PASSWORD);
+            mConnections.put(addr, conn);
+        }
+
+		return conn;
 	}
 
 	@Override
@@ -70,81 +78,96 @@ public class ConnectorService extends Service {
 
 	/** Shuts down all connections. */
 	private void shutdown() {
-		if (mConnector != null) {
-			mConnector.close();
-			mConnector = null;
-		}
-	}
+	    synchronized (mConnections) {
+            for (Map.Entry<InetSocketAddress, ConnectorInterface> entry : mConnections.entrySet()) {
+                ConnectorInterface conn = entry.getValue();
+                if (conn.connector != null) {
+                    conn.connector.close();
+                    conn.connector = null;
+                }
+            }
 
-	public void setListener(ConnectorListener listener) {
-		mListener = listener;
-	}
-
-	public void connect() {
-		mConnector = new Connector();
-		mConnector.start();
-	}
-
-	public boolean isConnected() {
-		return (mSession != null && mSession.isConnected());
-	}
-
-	public Session getSession() {
-	    return mSession;
-	}
-
-	public long getProfileId() {
-	    return mProfileId;
-	}
-
-	private final class Connector extends Thread {
-		@Override
-		public void run() {
-			// connect to server
-			try {
-				mSession = mJsch.getSession(mUsername, mServer, mPort);
-				mSession.setPassword(mPassword);
-
-				// allow new hosts :)
-				Properties config = new Properties();
-				config.put("StrictHostKeyChecking", "no");
-				mSession.setConfig(config);
-
-				Log.d(TAG, "connecting to " + mUsername + "@" + mServer);
-				mSession.connect();
-				if (mListener != null)
-					mListener.connected();
-
-				Log.d(TAG, "connected!");
-			}
-			catch (Exception e) {
-				Log.e(TAG, "connection error", e);
-				if (mListener != null)
-					mListener.connectionError(e);
-			}
-		}
-
-		public void close() {
-			interrupt();
-			mSession.disconnect();
-			if (mListener != null) {
-				mListener.disconnected();
-				// discard listener so it won't be called again
-				mListener = null;
-			}
-		}
+            mConnections.clear();
+        }
 	}
 
 	public final class ConnectorInterface extends Binder {
+        public String host;
+        public int port;
+        public String username;
+        public String password;
+        public long profileId;
+
+        public ConnectorListener listener;
+        public Session session;
+
+        private Connector connector;
+
+	    public ConnectorInterface() {
+	    }
+
+	    public void connect() {
+	        connector = new Connector();
+	        connector.start();
+	    }
+
+	    public boolean isConnected() {
+	        return (session != null && session.isConnected());
+	    }
+
+	    public void disconnect() {
+	        if (connector != null)
+	            connector.close();
+	    }
+
 		public ConnectorService getService() {
 			return ConnectorService.this;
 		}
+
+	    private final class Connector extends Thread {
+
+	        @Override
+	        public void run() {
+	            // connect to server
+	            try {
+	                session = mJsch.getSession(username, host, port);
+	                session.setPassword(password);
+
+	                // allow new hosts :)
+	                Properties config = new Properties();
+	                config.put("StrictHostKeyChecking", "no");
+	                session.setConfig(config);
+
+	                Log.d(TAG, "connecting to " + username + "@" + host);
+	                session.connect();
+	                if (listener != null)
+	                    listener.connected(ConnectorInterface.this);
+
+	                Log.d(TAG, "connected!");
+	            }
+	            catch (Exception e) {
+	                Log.e(TAG, "connection error", e);
+	                if (listener != null)
+	                    listener.connectionError(ConnectorInterface.this, e);
+	            }
+	        }
+
+	        public void close() {
+	            interrupt();
+	            session.disconnect();
+	            if (listener != null) {
+	                listener.disconnected(ConnectorInterface.this);
+	                // discard listener so it won't be called again
+	                listener = null;
+	            }
+	        }
+	    }
 	}
 
 	public interface ConnectorListener {
-		public void connected();
-		public void connectionError(Throwable e);
-		public void disconnected();
+		public void connected(ConnectorInterface connector);
+		public void connectionError(ConnectorInterface connector, Throwable e);
+		public void disconnected(ConnectorInterface connector);
 	}
 
 }

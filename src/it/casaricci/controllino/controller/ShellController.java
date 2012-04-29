@@ -1,6 +1,6 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public abstract class ShellController extends BaseController {
     private Executor mExecutor;
     private ShellExecuteListener mShellExecuteListener;
 
-    public ShellController(ConnectorService connector) {
+    public ShellController(ConnectorInterface connector) {
         super(connector);
     }
 
@@ -66,7 +66,7 @@ public abstract class ShellController extends BaseController {
             Channel channel = null;
             int exitStatus = -1;
             try {
-                Session sess = mConnector.getSession();
+                Session sess = mConnector.session;
                 channel = sess.openChannel("exec");
                 channel.setInputStream(null);
                 ((ChannelExec) channel).setCommand(mExec);

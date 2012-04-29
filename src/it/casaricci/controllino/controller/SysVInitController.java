@@ -1,6 +1,6 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 
 
 /**
@@ -39,7 +39,7 @@ public abstract class SysVInitController extends ShellController {
         }
     }
 
-    public SysVInitController(ConnectorService connector, String name) {
+    public SysVInitController(ConnectorInterface connector, String name) {
         super(connector);
         mScriptName = name;
     }

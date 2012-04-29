@@ -1,6 +1,7 @@
 package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.BaseController;
 import it.casaricci.controllino.controller.BaseController.ResultListener;
@@ -32,10 +33,13 @@ public class StatusActivity extends ListActivity {
     private ListView mListView;
 	/** The list adapter. */
 	private ServiceStatusListAdapter mAdapter;
-	/** Connector service instance. */
-	private ConnectorService mConnector;
+	/** Connector interface. */
+	private ConnectorInterface mConnector;
 	/** Reusable status dialog. */
 	//private ProgressDialog mStatus;
+
+	private String mHost;
+	private int mPort;
 
     private ResultListener mResultListener = new ResultListener() {
 		@Override
@@ -64,7 +68,7 @@ public class StatusActivity extends ListActivity {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mConnector = ((ConnectorService.ConnectorInterface) service).getService();
+			mConnector = (ConnectorService.ConnectorInterface) service;
 			if (!mConnector.isConnected()) {
 			    // TODO reconnection??
 			}
@@ -106,6 +110,10 @@ public class StatusActivity extends ListActivity {
 
 	    registerForContextMenu(mListView);
 	    mListView.setLongClickable(false);
+
+	    Intent i = getIntent();
+	    mHost = i.getStringExtra(ConnectorService.EXTRA_HOST);
+	    mPort = i.getIntExtra(ConnectorService.EXTRA_PORT, ConnectorService.DEFAULT_PORT);
 
 	    /*
 	    mStatus = new ProgressDialog(this);
@@ -168,9 +176,14 @@ public class StatusActivity extends ListActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        // prepare intent for connector
+        Intent i = new Intent(this, ConnectorService.class);
+        i.putExtra(ConnectorService.EXTRA_HOST, mHost);
+        i.putExtra(ConnectorService.EXTRA_PORT, mPort);
+
         // bind to connector
-        if (!bindService(new Intent(this, ConnectorService.class),
-                mConnection, BIND_AUTO_CREATE)) {
+        if (!bindService(i, mConnection, BIND_AUTO_CREATE)) {
             error("Unable to bind to connector service.");
             finish();
         }
@@ -198,11 +211,17 @@ public class StatusActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.status_update:
-            mAdapter.update(mConnector);
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.status_update:
+                mAdapter.update(mConnector);
+                return true;
+
+            case R.id.disconnect:
+                mConnector.disconnect();
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

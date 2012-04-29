@@ -1,6 +1,6 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 
 
@@ -11,7 +11,7 @@ import it.casaricci.controllino.R;
 public class DelugeController extends SysVInitController {
 	private UpdateShellListener mUpdateListener = new UpdateShellListener();
 
-    public DelugeController(ConnectorService connector) {
+    public DelugeController(ConnectorInterface connector) {
         super(connector, "deluge-daemon");
     }
 

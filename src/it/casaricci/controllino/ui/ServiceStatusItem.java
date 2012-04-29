@@ -1,6 +1,6 @@
 package it.casaricci.controllino.ui;
 
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.BaseController;
 import it.casaricci.controllino.controller.BaseController.Status;
@@ -128,7 +128,7 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
         }
     }
 
-    public void bind(int position, BaseController controller, ConnectorService connector) {
+    public void bind(int position, BaseController controller, ConnectorInterface connector) {
         mController = controller;
 
         mServiceName.setText(mController.getServiceName());

@@ -1,7 +1,7 @@
 package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.Configuration;
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.BaseController;
 import it.casaricci.controllino.controller.DefaultSysVInitController;
@@ -21,7 +21,7 @@ import android.widget.BaseAdapter;
 public class ServiceStatusListAdapter extends BaseAdapter {
 	private final LayoutInflater mInflater;
 
-	private ConnectorService mConnector;
+	private ConnectorInterface mConnector;
 	private List<BaseController> mList = new ArrayList<BaseController>();
 
 	public ServiceStatusListAdapter(Context context) {
@@ -56,12 +56,12 @@ public class ServiceStatusListAdapter extends BaseAdapter {
         return view;
     }
 
-	public void update(ConnectorService connector) {
+	public void update(ConnectorInterface connector) {
 		mConnector = connector;
 
 		if (mList.size() == 0) {
 	        // get services from connector's profile
-		    Cursor c = Configuration.getInstance(mInflater.getContext()).getServices(connector.getProfileId());
+		    Cursor c = Configuration.getInstance(mInflater.getContext()).getServices(connector.profileId);
 		    while (c.moveToNext()) {
 		        BaseController ctrl = null;
 		        ServiceData data = ServiceData.fromCursor(c);

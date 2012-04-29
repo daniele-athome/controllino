@@ -1,9 +1,6 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 
 
 /**
@@ -25,13 +22,13 @@ public abstract class BaseController {
 		STATUS_ERROR
 	}
 
-	protected ConnectorService mConnector;
+	protected ConnectorInterface mConnector;
 	protected Status mStatus = Status.STATUS_CHECKING;
 
     protected StatusChangedListener mStatusChangedListener;
     protected ResultListener mResultListener;
 
-	public BaseController(ConnectorService connector) {
+	public BaseController(ConnectorInterface connector) {
 	    mConnector = connector;
     }
 

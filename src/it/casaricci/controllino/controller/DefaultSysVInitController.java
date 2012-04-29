@@ -2,6 +2,7 @@ package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService;
 import it.casaricci.controllino.R;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.data.ServiceData;
 
 import java.lang.reflect.Field;
@@ -17,7 +18,7 @@ public class DefaultSysVInitController extends SysVInitController {
     private UpdateShellListener mUpdateListener = new UpdateShellListener();
     private StartStopShellListener mStartStopListener = new StartStopShellListener(mUpdateListener);
 
-    public DefaultSysVInitController(ConnectorService connector, ServiceData service) {
+    public DefaultSysVInitController(ConnectorInterface connector, ServiceData service) {
         super(connector, service.getCommand());
         if (!"sysvinit".equals(service.getType()))
             throw new IllegalArgumentException("not a Sys V init service.");

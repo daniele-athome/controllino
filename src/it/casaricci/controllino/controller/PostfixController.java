@@ -1,6 +1,6 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 
 
@@ -11,7 +11,7 @@ import it.casaricci.controllino.R;
 public class PostfixController extends SysVInitController {
 	private UpdateShellListener mUpdateListener = new UpdateShellListener();
 
-    public PostfixController(ConnectorService connector) {
+    public PostfixController(ConnectorInterface connector) {
         super(connector, "postfix");
     }
 

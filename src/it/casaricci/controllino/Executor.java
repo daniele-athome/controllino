@@ -1,5 +1,7 @@
 package it.casaricci.controllino;
 
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
+
 import java.io.InputStream;
 
 import com.jcraft.jsch.Channel;
@@ -12,11 +14,11 @@ import com.jcraft.jsch.Session;
  * @author Daniele Ricci
  */
 public class Executor extends Thread {
-    private final ConnectorService mConnector;
+    private final ConnectorInterface mConnector;
     private final String mExec;
     private ExecuteListener mListener;
 
-    public Executor(ConnectorService conn, String exec) {
+    public Executor(ConnectorInterface conn, String exec) {
         mConnector = conn;
         mExec = exec;
     }
@@ -30,7 +32,7 @@ public class Executor extends Thread {
         Channel channel = null;
         int exitStatus = -1;
         try {
-            Session sess = mConnector.getSession();
+            Session sess = mConnector.session;
             channel = sess.openChannel("exec");
             channel.setInputStream(null);
             ((ChannelExec) channel).setCommand(mExec);

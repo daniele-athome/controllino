@@ -2,6 +2,7 @@ package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.ConnectorService;
+import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.Executor;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServerData;
@@ -42,14 +43,12 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
     /** Reusable status dialog. */
     private ProgressDialog mStatus;
-    /** Connector service instance. */
-    private ConnectorService mConnector;
     /** Action to be run when connected. */
-    private Runnable mConnectedAction;
+    private ConnectedRunnable mConnectedAction;
 
-    private Runnable mShowStatusAction = new Runnable() {
+    private ConnectedRunnable mShowStatusAction = new ConnectedRunnable() {
         @Override
-        public void run() {
+        public void run(ConnectorInterface conn) {
             mStatus.dismiss();
             Intent i = new Intent(ServerListActivity.this, StatusActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -60,23 +59,28 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     private ConnectorServiceConnection mConnection = new ConnectorServiceConnection();
 
     private final class ConnectorServiceConnection implements ServiceConnection {
+        private ConnectorInterface connection;
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mConnector = null;
+            connection = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mConnector = ((ConnectorService.ConnectorInterface) service).getService();
-            mConnector.setListener(ServerListActivity.this);
-            mConnector.connect();
+            connection = (ConnectorService.ConnectorInterface) service;
+            connection.listener = ServerListActivity.this;
+            if (!connection.isConnected())
+                connection.connect();
+            else
+                connected(connection);
         }
 
         public void disconnect() {
-            if (mConnector != null) {
+            if (connection != null) {
                 unbindService(this);
                 // invalidate connection immediately
-                mConnector = null;
+                connection = null;
             }
         }
     };
@@ -187,10 +191,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 return true;
 
             case MENU_SHUTDOWN:
-                connect(data, new Runnable() {
+                connect(data, new ConnectedRunnable() {
                     @Override
-                    public void run() {
-                        Executor exec = new Executor(mConnector, "shutdown -h -P now");
+                    public void run(ConnectorInterface conn) {
+                        Executor exec = new Executor(conn, "shutdown -h -P now");
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
@@ -199,10 +203,10 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 return true;
 
             case MENU_REBOOT:
-                connect(data, new Runnable() {
+                connect(data, new ConnectedRunnable() {
                     @Override
-                    public void run() {
-                        Executor exec = new Executor(mConnector, "shutdown -r now");
+                    public void run(ConnectorInterface conn) {
+                        Executor exec = new Executor(conn, "shutdown -r now");
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
@@ -260,30 +264,31 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         connect((ServerData) mAdapter.getItem(position), mShowStatusAction);
     }
 
-    private void connect(ServerData item, Runnable action) {
+    private void connect(ServerData item, ConnectedRunnable action) {
         // TODO i18n
         connect(item, action, "Connecting...");
     }
 
-    private void connect(ServerData item, Runnable action, String connectingStatus) {
+    private void connect(ServerData item, ConnectedRunnable action, String connectingStatus) {
         mStatus.setMessage(connectingStatus);
         mStatus.setOnCancelListener(mAbortConnectionListener);
         mStatus.show();
 
         mConnectedAction = action;
 
-        // start connector
+        // start service first
+        startService(new Intent(this, ConnectorService.class));
+
+        // prepare intent for connector
         Intent i = new Intent(this, ConnectorService.class);
         i.putExtra(ConnectorService.EXTRA_PROFILE_ID, item.getProfileId());
         i.putExtra(ConnectorService.EXTRA_HOST, item.getHost());
         i.putExtra(ConnectorService.EXTRA_PORT, item.getPort());
         i.putExtra(ConnectorService.EXTRA_USERNAME, item.getUsername());
         i.putExtra(ConnectorService.EXTRA_PASSWORD, item.getPassword());
-        startService(i);
 
         // bind to connector
-        if (!bindService(new Intent(this, ConnectorService.class),
-                mConnection, 0)) {
+        if (!bindService(i, mConnection, BIND_AUTO_CREATE)) {
             // TODO i18n
             error("Unable to bind to connector service.");
             return;
@@ -331,13 +336,13 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     @Override
-    public void connected() {
+    public void connected(ConnectorInterface conn) {
         if (mConnectedAction != null)
-            mConnectedAction.run();
+            mConnectedAction.run(conn);
     }
 
     @Override
-    public void connectionError(Throwable e) {
+    public void connectionError(ConnectorInterface conn, Throwable e) {
         StringBuilder sb = new StringBuilder(e.getClass().getName());
         if (e.getMessage() != null)
             sb.append(": ")
@@ -347,7 +352,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     @Override
-    public void disconnected() {
+    public void disconnected(ConnectorInterface conn) {
     }
 
     private void error(final String message) {
@@ -370,4 +375,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         // TODO
     }
 
+    private interface ConnectedRunnable {
+        public void run(ConnectorInterface conn);
+    }
 }
