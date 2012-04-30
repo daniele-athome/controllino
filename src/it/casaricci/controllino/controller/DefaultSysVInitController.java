@@ -1,6 +1,5 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.ConnectorService;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.data.ServiceData;

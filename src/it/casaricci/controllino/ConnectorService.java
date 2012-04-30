@@ -59,7 +59,7 @@ public class ConnectorService extends Service {
         ConnectorInterface conn = mConnections.get(addr);
         if (conn == null) {
             Log.v(TAG, "creating new instance for " + host + ":" + port);
-            conn = new ConnectorInterface();
+            conn = new ConnectorInterface(mJsch);
             conn.host = host;
             conn.port = port;
             conn.profileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
@@ -81,17 +81,14 @@ public class ConnectorService extends Service {
 	    synchronized (mConnections) {
             for (Map.Entry<InetSocketAddress, ConnectorInterface> entry : mConnections.entrySet()) {
                 ConnectorInterface conn = entry.getValue();
-                if (conn.connector != null) {
-                    conn.connector.close();
-                    conn.connector = null;
-                }
+                conn.disconnect();
             }
 
             mConnections.clear();
         }
 	}
 
-	public final class ConnectorInterface extends Binder {
+	public static final class ConnectorInterface extends Binder {
         public String host;
         public int port;
         public String username;
@@ -101,9 +98,11 @@ public class ConnectorService extends Service {
         public ConnectorListener listener;
         public Session session;
 
+        private JSch mJsch;
         private Connector connector;
 
-	    public ConnectorInterface() {
+	    public ConnectorInterface(JSch jsch) {
+	        mJsch = jsch;
 	    }
 
 	    public void connect() {
@@ -116,13 +115,11 @@ public class ConnectorService extends Service {
 	    }
 
 	    public void disconnect() {
-	        if (connector != null)
+	        if (connector != null) {
 	            connector.close();
+	            connector = null;
+	        }
 	    }
-
-		public ConnectorService getService() {
-			return ConnectorService.this;
-		}
 
 	    private final class Connector extends Thread {
 
@@ -160,6 +157,8 @@ public class ConnectorService extends Service {
 	                // discard listener so it won't be called again
 	                listener = null;
 	            }
+	            // discard reference to session
+	            session = null;
 	        }
 	    }
 	}

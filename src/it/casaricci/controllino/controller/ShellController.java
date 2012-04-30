@@ -1,10 +1,14 @@
 package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
+import it.casaricci.controllino.data.ServiceData;
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -28,6 +32,28 @@ public abstract class ShellController extends BaseController {
 
     public ShellController(ConnectorInterface connector) {
         super(connector);
+    }
+
+    /**
+     * Dynamically creates a new {@link ShellController} instance by looking up
+     * the script types map.
+     */
+    public static ShellController newInstance(ConnectorInterface connector,
+            ServiceData service) {
+        try {
+            Class<? extends ShellController> klass = scriptTypes.get(service.getType());
+            if (klass != null) {
+                Constructor<? extends ShellController> ctor = klass
+                    .getConstructor(ConnectorInterface.class, ServiceData.class);
+                return ctor.newInstance(connector, service);
+            }
+        }
+        catch (Throwable e) {
+            // TODO TAG
+            Log.e("ShellController", "unable to create controller instance", e);
+        }
+
+        return null;
     }
 
     public interface ShellExecuteListener {

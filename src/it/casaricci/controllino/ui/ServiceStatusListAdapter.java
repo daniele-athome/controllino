@@ -4,7 +4,7 @@ import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.BaseController;
-import it.casaricci.controllino.controller.DefaultSysVInitController;
+import it.casaricci.controllino.controller.ShellController;
 import it.casaricci.controllino.data.ServiceData;
 
 import java.util.ArrayList;
@@ -65,21 +65,12 @@ public class ServiceStatusListAdapter extends BaseAdapter {
 		    while (c.moveToNext()) {
 		        BaseController ctrl = null;
 		        ServiceData data = ServiceData.fromCursor(c);
-		        if ("sysvinit".equals(data.getType()))
-		            ctrl = new DefaultSysVInitController(mConnector, data);
+		        ctrl = ShellController.newInstance(connector, data);
 
 		        if (ctrl != null)
 		            mList.add(ctrl);
 		    }
 		    c.close();
-
-		    /*
-    		mList.add(new DummyController(connector));
-    		mList.add(new ApacheHTTPController(connector));
-    		mList.add(new MySQLController(connector));
-    		mList.add(new PostfixController(connector));
-    		mList.add(new DelugeController(connector));
-    		*/
 		}
 
 	    for (BaseController ctrl : mList)
