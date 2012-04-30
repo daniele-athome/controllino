@@ -32,7 +32,7 @@ public class ServicesListAdapter extends BaseCursorListAdapter {
     @Override
     public void bindData(BaseCursorListAdapter.ViewHolder holder, Context context, Cursor cursor) {
         ServiceData item = ServiceData.fromCursor(cursor);
-        holder.textTitle.setText(item.getName() + " " + item.getVersion());
+        holder.textTitle.setText(item.toString());
 
         // service type
         CharSequence displayType;

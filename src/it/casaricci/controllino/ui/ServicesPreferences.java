@@ -90,7 +90,7 @@ public class ServicesPreferences extends ListActivity {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         ServiceData data = (ServiceData) mAdapter.getItem(info.position);
 
-        menu.setHeaderTitle(data.getName() + " " + data.getVersion());
+        menu.setHeaderTitle(data.toString());
         // TODO i18n
         menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit service");
         menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete service");

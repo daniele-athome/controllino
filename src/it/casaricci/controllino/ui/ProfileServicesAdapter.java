@@ -65,7 +65,7 @@ public class ProfileServicesAdapter extends ArrayAdapter<ServiceData> {
         }
 
         ServiceData item = getItem(position);
-        holder.textTitle.setText(item.getName() + " " + item.getVersion());
+        holder.textTitle.setText(item.toString());
 
         // service type
         CharSequence displayType;

@@ -35,6 +35,7 @@ import com.commonsware.cwac.merge.MergeAdapter;
  * @author Daniele Ricci
  */
 public class ProfileEditor extends ListActivity {
+    public static final int REQUEST_SERVICE_EDITOR = 1;
 
     public static final String EXTRA_PROFILE_ID = "it.casaricci.controllino.profileId";
 
@@ -275,10 +276,47 @@ public class ProfileEditor extends ListActivity {
             editMetadata((RecordInfo) item);
         }
         else if (item instanceof ServiceData) {
-            // TODO what to do with service??
-            // TODO open a popup with more choices, for now just delete it
+            final ServiceData data = (ServiceData) item;
+            // TODO i18n
+            CharSequence[] items = new CharSequence[] {
+                "Remove service",
+                "Edit service"
+            };
+
             mDirty = true;
-            mServicesAdapter.remove((ServiceData) item);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder
+                .setTitle(data.toString())
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            mServicesAdapter.remove(data);
+                        }
+                        else if (which == 1) {
+                            startActivityForResult(ServiceEditor
+                                .fromServiceId(ProfileEditor.this, data.getId()),
+                                    REQUEST_SERVICE_EDITOR);
+                        }
+                    }
+                })
+                .create()
+                .show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SERVICE_EDITOR) {
+            if (resultCode == RESULT_OK) {
+                // TODO i18n
+                Toast.makeText(this, "Service saved.", Toast.LENGTH_SHORT).show();
+            }
+            else if (resultCode == ServiceEditor.RESULT_DELETED) {
+                // TODO i18n
+                Toast.makeText(this, "Service deleted.", Toast.LENGTH_SHORT).show();
+            }
+            refreshServices();
         }
     }
 
@@ -312,6 +350,10 @@ public class ProfileEditor extends ListActivity {
         txt.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         final Dialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void refreshServices() {
+        // TODO different things to do if the service exists or is new
     }
 
     public static Intent newEditor(Context context) {
