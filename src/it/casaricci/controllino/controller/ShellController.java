@@ -3,12 +3,10 @@ package it.casaricci.controllino.controller;
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 import it.casaricci.controllino.data.ServiceData;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.http.util.ByteArrayBuffer;
 
 import android.util.Log;
 
@@ -94,25 +92,18 @@ public abstract class ShellController extends BaseController {
         public void run() {
             Channel channel = null;
             int exitStatus = -1;
-            ByteArrayBuffer buf = null;
+            ByteArrayOutputStream buf = null;
             try {
                 Session sess = mConnector.session;
                 channel = sess.openChannel("exec");
                 channel.setInputStream(null);
+                buf = new ByteArrayOutputStream(0);
+                channel.setOutputStream(buf, true);
+
                 ((ChannelExec) channel).setCommand(mExec);
                 channel.connect();
 
-                InputStream in=channel.getInputStream();
-                buf = new ByteArrayBuffer(0);
-
-                byte[] tmp=new byte[1024];
                 while(true){
-                    while(in.available()>0){
-                        int i=in.read(tmp, 0, 1024);
-                        if(i<0)break;
-                        // append to buffer
-                        buf.append(tmp, 0, i);
-                    }
                     if (channel.isClosed()) {
                         exitStatus = channel.getExitStatus();
                         break;
@@ -132,7 +123,13 @@ public abstract class ShellController extends BaseController {
             mExecutor = null;
 
             if (mShellExecuteListener != null)
-                mShellExecuteListener.onExecuteFinish(ShellController.this, exitStatus, buf != null ? buf.buffer() : null);
+                mShellExecuteListener.onExecuteFinish(ShellController.this, exitStatus, buf != null ? buf.toByteArray() : null);
+            try {
+                buf.close();
+            }
+            catch (Exception e) {
+                // ignore
+            }
         }
     }
 
