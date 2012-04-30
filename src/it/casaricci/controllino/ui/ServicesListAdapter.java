@@ -1,10 +1,6 @@
 package it.casaricci.controllino.ui;
 
-import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServiceData;
-
-import java.lang.reflect.Field;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
@@ -39,16 +35,8 @@ public class ServicesListAdapter extends BaseCursorListAdapter {
         holder.textTitle.setText(item.getName() + " " + item.getVersion());
 
         // service type
-        int stringId = 0;
         CharSequence displayType;
-        try {
-            Field _stringId = R.string.class.getField("script_" + item.getType());
-            stringId = _stringId.getInt(null);
-        }
-        catch (Exception e) {
-            // ignore
-        }
-
+        int stringId = ServiceData.getTypeString(item.getType());
         if (stringId > 0)
             displayType = context.getString(stringId);
         else
@@ -57,15 +45,7 @@ public class ServicesListAdapter extends BaseCursorListAdapter {
         holder.textSummary.setText(displayType);
 
         // service icon
-        int iconId = 0;
-        try {
-            Field _iconId = R.drawable.class.getField(item.getIcon());
-            iconId = _iconId.getInt(null);
-        }
-        catch (Exception e) {
-            // ignore
-        }
-
+        int iconId = ServiceData.getIconDrawable(item.getIcon());
         if (iconId > 0) {
             holder.viewOthers[0].setVisibility(View.VISIBLE);
             ((ImageView) holder.viewOthers[0]).setImageResource(iconId);

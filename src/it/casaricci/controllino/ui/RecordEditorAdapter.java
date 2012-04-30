@@ -2,8 +2,8 @@ package it.casaricci.controllino.ui;
 
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.RecordInfo;
+import it.casaricci.controllino.data.ServiceData;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 
 public abstract class RecordEditorAdapter extends ArrayAdapter<RecordInfo> {
     protected Context mContext;
@@ -76,15 +77,7 @@ public abstract class RecordEditorAdapter extends ArrayAdapter<RecordInfo> {
             holder.textSummary.setVisibility(View.GONE);
         }
         else if (item.getType() == RecordInfo.TYPE_SCRIPT_TYPE) {
-            int stringId = 0;
-            try {
-                Field _stringId = R.string.class.getField("script_" + item.getData());
-                stringId = _stringId.getInt(null);
-            }
-            catch (Exception e) {
-                // ignore
-            }
-
+            int stringId = ServiceData.getTypeString(item.getData());
             if (stringId > 0)
                 display = mContext.getString(stringId);
             else

@@ -1,10 +1,7 @@
 package it.casaricci.controllino.controller;
 
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
-import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServiceData;
-
-import java.lang.reflect.Field;
 
 
 /**
@@ -37,13 +34,7 @@ public class DefaultUpstartController extends UpstartController {
 
     @Override
     public int getServiceIcon() {
-        try {
-            Field _iconId = R.drawable.class.getField(mService.getIcon());
-            return _iconId.getInt(null);
-        }
-        catch (Exception e) {
-            return 0;
-        }
+        return ServiceData.getIconDrawable(mService.getIcon());
     }
 
     @Override

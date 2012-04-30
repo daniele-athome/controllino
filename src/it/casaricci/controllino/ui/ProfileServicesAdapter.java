@@ -1,9 +1,7 @@
 package it.casaricci.controllino.ui;
 
-import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServiceData;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import android.content.Context;
@@ -68,17 +66,18 @@ public class ProfileServicesAdapter extends ArrayAdapter<ServiceData> {
 
         ServiceData item = getItem(position);
         holder.textTitle.setText(item.getName() + " " + item.getVersion());
-        holder.textSummary.setText(item.getType());
 
-        int iconId = 0;
-        try {
-            Field _iconId = R.drawable.class.getField(item.getIcon());
-            iconId = _iconId.getInt(null);
-        }
-        catch (Exception e) {
-            // ignore
-        }
+        // service type
+        CharSequence displayType;
+        int stringId = ServiceData.getTypeString(item.getType());
+        if (stringId > 0)
+            displayType = mContext.getString(stringId);
+        else
+            displayType = item.getType();
 
+        holder.textSummary.setText(displayType);
+
+        int iconId = ServiceData.getIconDrawable(item.getIcon());
         if (iconId > 0) {
             holder.imageIcon.setVisibility(View.VISIBLE);
             holder.imageIcon.setImageResource(iconId);

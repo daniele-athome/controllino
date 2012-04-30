@@ -1,7 +1,9 @@
 package it.casaricci.controllino.data;
 
+import it.casaricci.controllino.R;
 import it.casaricci.controllino.ui.ProfileEditor;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import android.database.Cursor;
@@ -80,6 +82,28 @@ public class ServiceData {
         for (int i = 0; i < out.length; i++)
             out[i] = list.get(i).id;
         return out;
+    }
+
+    public static int getTypeString(String type) {
+        try {
+            Field _stringId = R.string.class.getField("script_" + type);
+            return _stringId.getInt(null);
+        }
+        catch (Exception e) {
+            // ignore
+            return 0;
+        }
+    }
+
+    public static int getIconDrawable(String icon) {
+        try {
+            Field _iconId = R.drawable.class.getField(icon);
+            return _iconId.getInt(null);
+        }
+        catch (Exception e) {
+            // ignore
+            return 0;
+        }
     }
 
 }

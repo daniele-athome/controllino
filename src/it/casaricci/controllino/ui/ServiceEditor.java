@@ -4,8 +4,8 @@ import it.casaricci.controllino.Configuration;
 import it.casaricci.controllino.R;
 import it.casaricci.controllino.controller.ShellController;
 import it.casaricci.controllino.data.RecordInfo;
+import it.casaricci.controllino.data.ServiceData;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -239,15 +239,7 @@ public class ServiceEditor extends ListActivity {
                 for (Map.Entry<String, Class<? extends ShellController>> entry :
                             ShellController.scriptTypes.entrySet()) {
 
-                    int stringId = 0;
-                    try {
-                        Field _stringId = R.string.class.getField("script_" + entry.getKey());
-                        stringId = _stringId.getInt(null);
-                    }
-                    catch (Exception e) {
-                        // ignore
-                    }
-
+                    int stringId = ServiceData.getTypeString(entry.getKey());
                     if (stringId > 0)
                         scriptTypesNames[i] = getString(stringId);
                     else
