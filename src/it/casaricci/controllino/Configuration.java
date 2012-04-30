@@ -94,20 +94,20 @@ public class Configuration extends SQLiteOpenHelper {
         return db.query(TABLE_SERVICES + " s JOIN " +
             TABLE_PROFILE_SERVICES + " ps ON s._id = ps.service_id",
             null,
-            "ps.profile_id = ?", new String[] { String.valueOf(profileId) },
+            "ps.profile_id = " + profileId, null,
             null, null, "name");
     }
 
     public Cursor getService(long id) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.query(TABLE_SERVICES, null, "_id = ?",
-            new String[] { String.valueOf(id) }, null, null, null);
+        return db.query(TABLE_SERVICES, null, "_id = " + id,
+            null, null, null, null);
     }
 
     public int getServiceUsageCount(long id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.query(TABLE_PROFILE_SERVICES, new String[] { "count(*)" },
-            "service_id = ?", new String[] { String.valueOf(id) }, null, null, null);
+            "service_id = " + id, null, null, null, null);
         try {
             if (c.moveToNext())
                 return c.getInt(0);
@@ -133,19 +133,27 @@ public class Configuration extends SQLiteOpenHelper {
     }
 
     public void updateService(long id, String name, String version, String type, String command, String icon) {
-        // TODO
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues(4);
+        values.put("name", name);
+        values.put("version", version);
+        values.put("type", type);
+        values.put("command", command);
+        values.put("icon", icon);
+
+        db.update(TABLE_SERVICES, values, "_id = " + id, null);
     }
 
     public void removeService(long id) {
         SQLiteDatabase db = getWritableDatabase();
         try {
             db.beginTransaction();
-            String[] args = new String[] { String.valueOf(id) };
 
             // remove link to profiles
-            db.delete(TABLE_PROFILE_SERVICES, "service_id = ?", args);
+            db.delete(TABLE_PROFILE_SERVICES, "service_id = " + id, null);
             // remove service
-            db.delete(TABLE_SERVICES, "_id = ?", args);
+            db.delete(TABLE_SERVICES, "_id = " + id, null);
 
             // commit!
             db.setTransactionSuccessful();
@@ -162,14 +170,14 @@ public class Configuration extends SQLiteOpenHelper {
 
     public Cursor getProfile(long id) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.query(TABLE_PROFILES, null, "_id = ?",
-            new String[] { String.valueOf(id) }, null, null, null);
+        return db.query(TABLE_PROFILES, null, "_id = " + id,
+            null, null, null, null);
     }
 
     public int getProfileUsageCount(long id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.query(TABLE_SERVERS, new String[] { "count(*)" },
-            "profile_id = ?", new String[] { String.valueOf(id) }, null, null, null);
+            "profile_id = " + id, null, null, null, null);
         try {
             if (c.moveToNext())
                 return c.getInt(0);
@@ -222,13 +230,11 @@ public class Configuration extends SQLiteOpenHelper {
             values.put("name", name);
             values.put("os_name", osName);
             values.put("os_version", osVersion);
-            db.update(TABLE_PROFILES, values,
-                "_id = ?", new String[] { String.valueOf(id) });
+            db.update(TABLE_PROFILES, values, "_id = " + id, null);
 
             // reinsert profile services
             if (services != null) {
-                db.delete(TABLE_PROFILE_SERVICES, "profile_id = ?",
-                    new String[] { String.valueOf(id) });
+                db.delete(TABLE_PROFILE_SERVICES, "profile_id = " + id, null);
                 if (services.length > 0) {
                     values.clear();
                     for (long servId : services) {
@@ -252,11 +258,10 @@ public class Configuration extends SQLiteOpenHelper {
         try {
             db.beginTransaction();
 
-            String[] args = new String[] { String.valueOf(id) };
             // delete profile services
-            db.delete(TABLE_PROFILE_SERVICES, "profile_id = ?", args);
+            db.delete(TABLE_PROFILE_SERVICES, "profile_id = " + id, null);
             // delete profile
-            db.delete(TABLE_PROFILES, "_id = ?", args);
+            db.delete(TABLE_PROFILES, "_id = " + id, null);
 
             // commit!
             db.setTransactionSuccessful();
@@ -273,8 +278,8 @@ public class Configuration extends SQLiteOpenHelper {
 
     public Cursor getServer(long id, Bundle profile) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.query(TABLE_SERVERS, null, "_id = ?",
-            new String[] { String.valueOf(id) }, null, null, null);
+        Cursor c = db.query(TABLE_SERVERS, null, "_id = " + id,
+            null, null, null, null);
 
         // profile data requested
         if (profile != null) {
@@ -317,12 +322,12 @@ public class Configuration extends SQLiteOpenHelper {
         values.put("password", password);
         values.put("profile_id", profileId);
 
-        db.update(TABLE_SERVERS, values, "_id = ?", new String[] { String.valueOf(id) });
+        db.update(TABLE_SERVERS, values, "_id = " + id, null);
     }
 
     public void removeServer(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE_SERVERS, "_id = ?", new String[] { String.valueOf(id) });
+        db.delete(TABLE_SERVERS, "_id = " + id, null);
     }
 
 }

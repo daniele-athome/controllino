@@ -74,7 +74,7 @@ public class ServiceEditor extends ListActivity {
             list.add(new RecordInfo("version", c.getString(2), R.string.service_field_version));
             list.add(new RecordInfo("type", c.getString(3), R.string.service_field_type, RecordInfo.TYPE_SCRIPT_TYPE));
             list.add(new RecordInfo("command", c.getString(4), R.string.service_field_command));
-            mIconResId = c.getString(4);
+            mIconResId = c.getString(5);
             c.close();
         }
         else {
@@ -97,7 +97,7 @@ public class ServiceEditor extends ListActivity {
 
             list.add(new RecordInfo("name", name, R.string.service_field_name));
             list.add(new RecordInfo("version", version, R.string.service_field_version));
-            list.add(new RecordInfo("type", type, R.string.service_field_type, RecordInfo.TYPE_LIST));
+            list.add(new RecordInfo("type", type, R.string.service_field_type, RecordInfo.TYPE_SCRIPT_TYPE));
             list.add(new RecordInfo("command", command, R.string.service_field_command));
         }
 
