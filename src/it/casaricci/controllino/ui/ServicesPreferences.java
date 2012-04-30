@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +46,13 @@ public class ServicesPreferences extends ListActivity {
             R.layout.preference_icon,
             android.R.id.title, android.R.id.summary, android.R.id.icon, null);
         setListAdapter(mAdapter);
+        registerForContextMenu(getListView());
+    }
+
+    /** No search here. */
+    @Override
+    public boolean onSearchRequested() {
+        return false;
     }
 
     @Override
@@ -71,6 +81,45 @@ public class ServicesPreferences extends ListActivity {
         }
     }
 
+    private static final int MENU_EDIT = 1;
+    private static final int MENU_DELETE = 2;
+    private static final int MENU_CLONE = 3;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        ServiceData data = (ServiceData) mAdapter.getItem(info.position);
+
+        menu.setHeaderTitle(data.getName() + " " + data.getVersion());
+        // TODO i18n
+        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit service");
+        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete service");
+        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, "Clone service");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+            .getMenuInfo();
+        ServiceData data = (ServiceData) mAdapter.getItem(info.position);
+
+        switch (item.getItemId()) {
+            case MENU_EDIT:
+                edit(data);
+                return true;
+
+            case MENU_DELETE:
+                delete(data.getId());
+                return true;
+
+            case MENU_CLONE:
+                newService(data);
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SERVICE_EDITOR) {
@@ -89,7 +138,19 @@ public class ServicesPreferences extends ListActivity {
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         ServiceData item = (ServiceData) list.getItemAtPosition(position);
+        edit(item);
+    }
+
+    private void edit(ServiceData item) {
         startActivityForResult(ServiceEditor.fromServiceId(this, item.getId()), REQUEST_SERVICE_EDITOR);
+    }
+
+    private void delete(final long id) {
+        ServiceEditor.delete(this, id, mConfig, new Runnable() {
+            public void run() {
+                refresh();
+            }
+        });
     }
 
     private void refresh() {
@@ -126,7 +187,7 @@ public class ServicesPreferences extends ListActivity {
                 if (which > 0) {
                     String[] tmpl = serviceTemplates[which - 1];
                     intent = ServiceEditor.newEditor(ServicesPreferences.this,
-                        tmpl[0], tmpl[1], tmpl[2], tmpl[3], tmpl[4]);
+                        tmpl[0], tmpl[1], tmpl[2], tmpl[3], tmpl[4], true);
                 }
                 else {
                     intent = ServiceEditor.newEditor(ServicesPreferences.this);
@@ -143,7 +204,14 @@ public class ServicesPreferences extends ListActivity {
             .setItems(items, listener);
 
         builder.create().show();
+    }
 
+    public void newService(ServiceData data) {
+        Intent intent = ServiceEditor.newEditor(ServicesPreferences.this,
+            data.getName(), data.getVersion(), data.getType(),
+            data.getCommand(), data.getIcon(), false);
+        // start service editor
+        startActivityForResult(intent, REQUEST_SERVICE_EDITOR);
     }
 
 }

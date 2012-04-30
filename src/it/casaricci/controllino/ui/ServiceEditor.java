@@ -40,6 +40,7 @@ public class ServiceEditor extends ListActivity {
     public static final String EXTRA_SERVICE_TYPE = "it.casaricci.controllino.service.type";
     public static final String EXTRA_SERVICE_COMMAND = "it.casaricci.controllino.service.command";
     public static final String EXTRA_SERVICE_ICON = "it.casaricci.controllino.service.icon";
+    public static final String EXTRA_NEW_DIRTY = "it.casaricci.controllino.service.newDirty";
 
     public static final int RESULT_DELETED = RESULT_FIRST_USER;
 
@@ -85,7 +86,7 @@ public class ServiceEditor extends ListActivity {
 
             // something was sent through a template, mark as dirty
             if (name != null || version != null || type != null || command != null)
-                mDirty = true;
+                mDirty = i.getBooleanExtra(EXTRA_NEW_DIRTY, false);
 
             // TODO i18n
             if (name == null) name = "New service";
@@ -131,7 +132,12 @@ public class ServiceEditor extends ListActivity {
 
             case R.id.menu_delete_service:
                 // delete service (upon confirmation)
-                delete();
+                delete(this, mServiceId, mConfig, new Runnable() {
+                    public void run() {
+                        end(RESULT_DELETED, false, true);
+                        finish();
+                    }
+                });
                 return true;
 
             case R.id.menu_discard_service:
@@ -160,25 +166,25 @@ public class ServiceEditor extends ListActivity {
         }
     }
 
-    private void delete() {
+    public static void delete(Context context, final long id, final Configuration config, final Runnable action) {
         // we ask confirmation anyhow, but we need to change the message if
         // this service is being used by a profile
         int msgId;
-        if (mConfig.getServiceUsageCount(mServiceId) > 0)
+        if (config.getServiceUsageCount(id) > 0)
             msgId = R.string.msg_service_delete_used_warn;
         else
             msgId = R.string.msg_service_delete_confirm;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
             .setTitle("Delete service")
             .setMessage(msgId)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mConfig.removeService(mServiceId);
-                    end(RESULT_DELETED, false, true);
-                    finish();
+                    config.removeService(id);
+                    if (action != null)
+                        action.run();
                 }
             })
             .setNegativeButton(android.R.string.cancel, null)
@@ -294,14 +300,15 @@ public class ServiceEditor extends ListActivity {
         return new Intent(context, ServiceEditor.class);
     }
 
-    public static Intent newEditor(Context context, String name, String version, String type, String command, String icon) {
-        Intent i = newEditor(context);
-        i.putExtra(EXTRA_SERVICE_NAME, name);
-        i.putExtra(EXTRA_SERVICE_VERSION, version);
-        i.putExtra(EXTRA_SERVICE_TYPE, type);
-        i.putExtra(EXTRA_SERVICE_COMMAND, command);
-        i.putExtra(EXTRA_SERVICE_ICON, icon);
-        return i;
+    public static Intent newEditor(Context context, String name, String version,
+            String type, String command, String icon, boolean newDirty) {
+        return newEditor(context)
+            .putExtra(EXTRA_SERVICE_NAME, name)
+            .putExtra(EXTRA_SERVICE_VERSION, version)
+            .putExtra(EXTRA_SERVICE_TYPE, type)
+            .putExtra(EXTRA_SERVICE_COMMAND, command)
+            .putExtra(EXTRA_SERVICE_ICON, icon)
+            .putExtra(EXTRA_NEW_DIRTY, newDirty);
     }
 
     public static Intent fromServiceId(Context context, long serviceId) {
