@@ -8,6 +8,8 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.util.ByteArrayBuffer;
+
 import android.util.Log;
 
 import com.jcraft.jsch.Channel;
@@ -25,6 +27,7 @@ public abstract class ShellController extends BaseController {
     static {
         scriptTypes = new HashMap<String, Class<? extends ShellController>>();
         scriptTypes.put("sysvinit", DefaultSysVInitController.class);
+        scriptTypes.put("upstart", DefaultUpstartController.class);
     }
 
     private Executor mExecutor;
@@ -58,7 +61,7 @@ public abstract class ShellController extends BaseController {
 
     public interface ShellExecuteListener {
         public void onError(ShellController ctrl, Throwable e);
-        public void onExecuteFinish(ShellController ctrl, int exitStatus);
+        public void onExecuteFinish(ShellController ctrl, int exitStatus, byte[] output);
     }
 
     public static class StartStopException extends Exception {
@@ -91,6 +94,7 @@ public abstract class ShellController extends BaseController {
         public void run() {
             Channel channel = null;
             int exitStatus = -1;
+            ByteArrayBuffer buf = null;
             try {
                 Session sess = mConnector.session;
                 channel = sess.openChannel("exec");
@@ -99,12 +103,15 @@ public abstract class ShellController extends BaseController {
                 channel.connect();
 
                 InputStream in=channel.getInputStream();
+                buf = new ByteArrayBuffer(0);
 
                 byte[] tmp=new byte[1024];
                 while(true){
                     while(in.available()>0){
                         int i=in.read(tmp, 0, 1024);
                         if(i<0)break;
+                        // append to buffer
+                        buf.append(tmp, 0, i);
                     }
                     if (channel.isClosed()) {
                         exitStatus = channel.getExitStatus();
@@ -125,7 +132,7 @@ public abstract class ShellController extends BaseController {
             mExecutor = null;
 
             if (mShellExecuteListener != null)
-                mShellExecuteListener.onExecuteFinish(ShellController.this, exitStatus);
+                mShellExecuteListener.onExecuteFinish(ShellController.this, exitStatus, buf != null ? buf.buffer() : null);
         }
     }
 

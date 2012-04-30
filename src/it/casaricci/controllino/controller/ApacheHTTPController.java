@@ -44,7 +44,7 @@ public class ApacheHTTPController extends SysVInitController {
         }
 
         @Override
-        public void onExecuteFinish(ShellController ctrl, int exitStatus) {
+        public void onExecuteFinish(ShellController ctrl, int exitStatus, byte[] output) {
             if (exitStatus == 0)
                 setStatus(Status.STATUS_RUNNING);
             else if (exitStatus == 1 || exitStatus == 3)

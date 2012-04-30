@@ -4,11 +4,12 @@ import it.casaricci.controllino.ConnectorService.ConnectorInterface;
 
 
 /**
- * A standard System V init script controller.
+ * Upstart service controller.
+ * Supports only single-process services.
  * @author Daniele Ricci
  */
-public abstract class SysVInitController extends ShellController {
-    private static final String PREFIX = "/etc/init.d/";
+public abstract class UpstartController extends ShellController {
+    private static final String PREFIX = "service";
     private String mScriptName;
 
     /** Generic start/stop {@link ShellExecuteListener}. */
@@ -39,13 +40,13 @@ public abstract class SysVInitController extends ShellController {
         }
     }
 
-    public SysVInitController(ConnectorInterface connector, String name) {
+    public UpstartController(ConnectorInterface connector, String name) {
         super(connector);
         mScriptName = name;
     }
 
     private void executeInitScript(String params) {
-        execute(PREFIX + mScriptName + " " + params);
+        execute(PREFIX + " " + mScriptName + " " + params);
     }
 
     public void update(ShellExecuteListener listener, boolean setChecking) {
@@ -80,7 +81,7 @@ public abstract class SysVInitController extends ShellController {
     }
 
     public String getScriptType() {
-        return "sysvinit";
+        return "upstart";
     }
 
 }

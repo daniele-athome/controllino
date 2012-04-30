@@ -1,26 +1,26 @@
 package it.casaricci.controllino.controller;
 
-import it.casaricci.controllino.R;
 import it.casaricci.controllino.ConnectorService.ConnectorInterface;
+import it.casaricci.controllino.R;
 import it.casaricci.controllino.data.ServiceData;
 
 import java.lang.reflect.Field;
 
 
 /**
- * A {@link SysVInitController} backed by a {@link ServiceData} service
- * definition. Not using a service type "sysvinit" will throw an exception.
+ * An {@link UpstartController} backed by a {@link ServiceData} service
+ * definition. Not using a service type "upstart" will throw an exception.
  * @author Daniele Ricci
  */
-public class DefaultSysVInitController extends SysVInitController {
+public class DefaultUpstartController extends UpstartController {
     private final ServiceData mService;
     private UpdateShellListener mUpdateListener = new UpdateShellListener();
     private StartStopShellListener mStartStopListener = new StartStopShellListener(mUpdateListener);
 
-    public DefaultSysVInitController(ConnectorInterface connector, ServiceData service) {
+    public DefaultUpstartController(ConnectorInterface connector, ServiceData service) {
         super(connector, service.getCommand());
-        if (!"sysvinit".equals(service.getType()))
-            throw new IllegalArgumentException("not a Sys V init service.");
+        if (!"upstart".equals(service.getType()))
+            throw new IllegalArgumentException("not an Upstart service.");
         mService = service;
     }
 
@@ -62,12 +62,39 @@ public class DefaultSysVInitController extends SysVInitController {
         @Override
         public void onExecuteFinish(ShellController ctrl, int exitStatus, byte[] output) {
             if (exitStatus == 0)
-                setStatus(Status.STATUS_RUNNING);
-            else if (exitStatus == 3)
-                setStatus(Status.STATUS_STOPPED);
+                setStatus(parseStatusOutput(output));
             else
                 setStatus(Status.STATUS_UNKNOWN);
         }
+    }
+
+    private Status parseStatusOutput(byte[] output) {
+        String script = mService.getCommand();
+
+        // default charset on Android is UTF-8
+        String out = new String(output);
+
+        String compareTo;
+
+        // goal: start
+        compareTo = script + " start/";
+        if (out.substring(0, compareTo.length()).equals(compareTo)) {
+            if (out.substring(compareTo.length(), compareTo.length() + "starting".length()).equals("starting"))
+                return Status.STATUS_STARTING;
+            if (out.substring(compareTo.length(), compareTo.length() + "running".length()).equals("running"))
+                return Status.STATUS_RUNNING;
+        }
+
+        // goal: stop
+        compareTo = script + " stop/";
+        if (out.substring(0, compareTo.length()).equals(compareTo)) {
+            if (out.substring(compareTo.length(), compareTo.length() + "stopping".length()).equals("stopping"))
+                return Status.STATUS_STOPPING;
+            if (out.substring(compareTo.length(), compareTo.length() + "waiting".length()).equals("waiting"))
+                return Status.STATUS_STOPPED;
+        }
+
+        return Status.STATUS_UNKNOWN;
     }
 
     @Override
