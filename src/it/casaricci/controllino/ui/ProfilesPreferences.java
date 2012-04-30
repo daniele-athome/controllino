@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +44,13 @@ public class ProfilesPreferences extends ListActivity {
             R.layout.preference,
             android.R.id.title, android.R.id.summary, null);
         setListAdapter(mAdapter);
+        registerForContextMenu(getListView());
+    }
+
+    /** No search here. */
+    @Override
+    public boolean onSearchRequested() {
+        return false;
     }
 
     @Override
@@ -69,6 +79,45 @@ public class ProfilesPreferences extends ListActivity {
         }
     }
 
+    private static final int MENU_EDIT = 1;
+    private static final int MENU_DELETE = 2;
+    private static final int MENU_CLONE = 3;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        ServerProfileData data = (ServerProfileData) mAdapter.getItem(info.position);
+
+        menu.setHeaderTitle(data.getName());
+        // TODO i18n
+        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit profile");
+        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete profile");
+        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, "Clone profile");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+            .getMenuInfo();
+        ServerProfileData data = (ServerProfileData) mAdapter.getItem(info.position);
+
+        switch (item.getItemId()) {
+            case MENU_EDIT:
+                edit(data);
+                return true;
+
+            case MENU_DELETE:
+                delete(data.getId());
+                return true;
+
+            case MENU_CLONE:
+                clone(data);
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PROFILE_EDITOR) {
@@ -87,7 +136,7 @@ public class ProfilesPreferences extends ListActivity {
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         ServerProfileData item = (ServerProfileData) list.getItemAtPosition(position);
-        startActivityForResult(ProfileEditor.fromProfileId(this, item.getId()), REQUEST_PROFILE_EDITOR);
+        edit(item);
     }
 
     private void refresh() {
@@ -97,6 +146,22 @@ public class ProfilesPreferences extends ListActivity {
         mAdapter.changeCursor(c);
         if (old != null)
             stopManagingCursor(old);
+    }
+
+    private void edit(ServerProfileData item) {
+        startActivityForResult(ProfileEditor.fromProfileId(this, item.getId()), REQUEST_PROFILE_EDITOR);
+    }
+
+    private void delete(final long id) {
+        ProfileEditor.delete(this, id, mConfig, new Runnable() {
+            public void run() {
+                refresh();
+            }
+        });
+    }
+
+    private void clone(ServerProfileData item) {
+        // TODO
     }
 
 }

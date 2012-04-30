@@ -181,7 +181,12 @@ public class ProfileEditor extends ListActivity {
 
             case R.id.menu_delete_profile:
                 // delete profile (upon confirmation)
-                delete();
+                delete(this, mProfileId, mConfig, new Runnable() {
+                    public void run() {
+                        end(RESULT_DELETED, false, true);
+                        finish();
+                    }
+                });
                 return true;
 
             case R.id.menu_discard_profile:
@@ -231,16 +236,16 @@ public class ProfileEditor extends ListActivity {
         }
     }
 
-    private void delete() {
+    public static void delete(Context context, final long id, final Configuration config, final Runnable action) {
         // check if this profile is being used by a server
         int msgId;
-        boolean used = (mConfig.getProfileUsageCount(mProfileId) > 0);
+        boolean used = (config.getProfileUsageCount(id) > 0);
         if (used)
             msgId = R.string.msg_profile_delete_used_warn;
         else
             msgId = R.string.msg_profile_delete_confirm;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
             .setTitle("Delete profile")
             .setMessage(msgId);
@@ -250,9 +255,9 @@ public class ProfileEditor extends ListActivity {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mConfig.removeProfile(mProfileId);
-                        end(RESULT_DELETED, false, true);
-                        finish();
+                        config.removeProfile(id);
+                        if (action != null)
+                            action.run();
                     }
                 });
         }
