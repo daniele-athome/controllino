@@ -132,8 +132,8 @@ public class ProfileEditor extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
 
-            case R.id.menu_add_service:
-                // add service from list
+            case R.id.menu_add_services:
+                // add services from list
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 Cursor c = mConfig.getServices();
                 int count = c.getCount();
@@ -144,7 +144,8 @@ public class ProfileEditor extends ListActivity {
                 }
                 else {
                     CharSequence[] items = new CharSequence[c.getCount()];
-                    final long[] itemsId = new long[c.getCount()];
+                    final long[] itemsId = new long[items.length];
+                    final boolean[] selected = new boolean[items.length];
                     int i = 0;
 
                     while (c.moveToNext()) {
@@ -154,26 +155,37 @@ public class ProfileEditor extends ListActivity {
                     }
                     c.close();
 
-                    final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                        @Override
+                    final DialogInterface.OnMultiChoiceClickListener listener = new DialogInterface.OnMultiChoiceClickListener() {
+                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                            selected[which] = isChecked;
+                        }
+                    };
+                    final DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            long sid = itemsId[which];
+                            // go through all selected and add each one to profile
+                            for (int i = 0; i < selected.length; i++) {
+                                if (selected[i]) {
+                                    long sid = itemsId[i];
 
-                            // check if chosen service has already been added
-                            if (mServicesAdapter.getPosition(new ServiceData(sid)) < 0) {
-                                mDirty = true;
-                                Cursor c = mConfig.getService(sid);
-                                c.moveToNext();
-                                mServicesAdapter.add(ServiceData.fromCursor(c));
-                                c.close();
+                                    // check if chosen service has already been added
+                                    if (mServicesAdapter.getPosition(new ServiceData(sid)) < 0) {
+                                        mDirty = true;
+                                        Cursor c = mConfig.getService(sid);
+                                        c.moveToNext();
+                                        mServicesAdapter.add(ServiceData.fromCursor(c));
+                                        c.close();
+                                    }
+                                }
                             }
                         }
                     };
 
                     builder
                         // TODO i18n
-                        .setTitle("Add service")
-                        .setItems(items, listener);
+                        .setTitle("Add services")
+                        .setPositiveButton(android.R.string.ok, clickListener)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setMultiChoiceItems(items, null, listener);
 
                     builder.create().show();
                 }

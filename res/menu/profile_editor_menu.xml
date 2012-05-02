@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/menu_add_service" android:title="Add service" android:icon="@android:drawable/ic_menu_add"/>
+    <item android:id="@+id/menu_add_services" android:title="Add services" android:icon="@android:drawable/ic_menu_add"/>
     <item android:id="@+id/menu_delete_profile" android:title="Delete profile" android:icon="@android:drawable/ic_menu_delete"/>
     <item android:id="@+id/menu_discard_profile" android:title="Discard profile" android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
 </menu>
