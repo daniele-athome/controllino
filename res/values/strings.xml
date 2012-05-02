@@ -3,6 +3,8 @@
     <string name="app_name">Controllino</string>
     <string name="status_running">Service is running.</string>
     <string name="status_stopped">Service is not running.</string>
+    <string name="status_error">Error reading service status.</string>
+    <string name="status_unknown">Unknown service status.</string>
     
     <string name="menu_start">Start</string>
     <string name="menu_stop">Stop</string>

@@ -71,8 +71,13 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
                             enable = true;
                             break;
                         case STATUS_ERROR:
+                            iconId = R.drawable.red_light;
+                            textId = R.string.status_error;
+                            enable = true;
+                            break;
                         case STATUS_UNKNOWN:
                             iconId = R.drawable.red_light;
+                            textId = R.string.status_unknown;
                             enable = true;
                             break;
                     }
