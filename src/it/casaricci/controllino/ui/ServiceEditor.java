@@ -71,9 +71,19 @@ public class ServiceEditor extends ListActivity {
             // load service
             Cursor c = mConfig.getService(mServiceId);
             c.moveToNext();
+
+            int selected = 0;
+            String type = c.getString(3);
+            for (int dx = 0; dx < scriptTypes.length; dx++) {
+                if (scriptTypes[dx].equals(type)) {
+                    selected = dx;
+                    break;
+                }
+            }
+
             list.add(new RecordInfo("name", c.getString(1), R.string.service_field_name));
             list.add(new RecordInfo("version", c.getString(2), R.string.service_field_version));
-            list.add(new RecordInfo("type", c.getString(3), R.string.service_field_type, RecordInfo.TYPE_SCRIPT_TYPE));
+            list.add(new RecordInfo("type", type, R.string.service_field_type, selected, RecordInfo.TYPE_SCRIPT_TYPE));
             list.add(new RecordInfo("command", c.getString(4), R.string.service_field_command));
             mIconResId = c.getString(5);
             c.close();
@@ -255,10 +265,13 @@ public class ServiceEditor extends ListActivity {
                 }
             }
 
+            int selected = (info.getDataId() >= 0) ? (int) info.getDataId() : 0;
             builder
-                .setItems(scriptTypesNames, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(scriptTypesNames, selected,
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        info.setDataId(which);
                         info.setData(scriptTypes[which]);
                         // invalidate ListView
                         mAdapter.notifyDataSetChanged();

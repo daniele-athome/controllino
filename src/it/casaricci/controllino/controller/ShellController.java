@@ -5,7 +5,7 @@ import it.casaricci.controllino.data.ServiceData;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import android.util.Log;
@@ -23,7 +23,7 @@ import com.jcraft.jsch.Session;
 public abstract class ShellController extends BaseController {
     public static final Map<String, Class<? extends ShellController>> scriptTypes;
     static {
-        scriptTypes = new HashMap<String, Class<? extends ShellController>>();
+        scriptTypes = new LinkedHashMap<String, Class<? extends ShellController>>();
         scriptTypes.put("sysvinit", DefaultSysVInitController.class);
         scriptTypes.put("upstart", DefaultUpstartController.class);
     }

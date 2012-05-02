@@ -24,7 +24,7 @@ public class RecordInfo {
 
     private final String field;
     private String data;
-    private long dataId;
+    private long dataId = -1;
     private final int resId;
     private final int type;
 

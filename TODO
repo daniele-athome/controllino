@@ -1,2 +1,5 @@
 [ ] when rendering entries partially, new entries don't get refresh (is it a UI
     thing or it's the service status?)
+[ ] adding multiple services to a profile at once
+[ ] removing multiple services from a profile at once
+[x] script type dialog should be single choice
