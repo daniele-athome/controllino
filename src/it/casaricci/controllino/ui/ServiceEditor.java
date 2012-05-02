@@ -268,12 +268,12 @@ public class ServiceEditor extends ListActivity {
             builder
                 .setSingleChoiceItems(scriptTypesNames, selected,
                         new DialogInterface.OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         info.setDataId(which);
                         info.setData(scriptTypes[which]);
                         // invalidate ListView
                         mAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
                     }
                 });
         }
