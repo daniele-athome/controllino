@@ -89,10 +89,9 @@ public class ProfilesPreferences extends ListActivity {
         ServerProfileData data = (ServerProfileData) mAdapter.getItem(info.position);
 
         menu.setHeaderTitle(data.getName());
-        // TODO i18n
-        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit profile");
-        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete profile");
-        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, "Clone profile");
+        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, R.string.menu_edit_profile);
+        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, R.string.menu_delete_profile);
+        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, R.string.menu_clone_profile);
     }
 
     @Override
@@ -122,12 +121,10 @@ public class ProfilesPreferences extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PROFILE_EDITOR) {
             if (resultCode == RESULT_OK) {
-                // TODO i18n
-                Toast.makeText(this, "Profile saved.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_profile_saved, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == ProfileEditor.RESULT_DELETED) {
-                // TODO i18n
-                Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_profile_deleted, Toast.LENGTH_SHORT).show();
             }
             // onResume will refresh()
         }
@@ -161,7 +158,7 @@ public class ProfilesPreferences extends ListActivity {
     }
 
     private void clone(ServerProfileData item) {
-        // TODO
+        // TODO clone server :)
     }
 
 }

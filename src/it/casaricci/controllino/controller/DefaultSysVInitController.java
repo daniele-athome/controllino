@@ -28,7 +28,6 @@ public class DefaultSysVInitController extends SysVInitController {
 
     @Override
     public CharSequence getServiceDescription() {
-        // TODO
         return mService.getType() + ": " + mService.getCommand();
     }
 

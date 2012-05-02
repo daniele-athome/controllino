@@ -33,7 +33,6 @@ public class ServiceStatusItem extends RelativeLayout implements ViewSwitcher.Vi
             post(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO not every status is i18n
                     Status st = ctrl.getStatus();
                     Animation anim = null;
                     int iconId = R.drawable.idle_light;

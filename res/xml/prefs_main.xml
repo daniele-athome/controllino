@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceScreen android:title="@string/pref_title_services" android:summary="@string/pref_summary_services" android:key="pref_services">
-    </PreferenceScreen>
-    <PreferenceScreen android:title="@string/pref_title_profiles" android:summary="@string/pref_summary_profiles" android:key="pref_profiles"></PreferenceScreen>
-
+    <PreferenceScreen android:title="@string/pref_title_services" android:summary="@string/pref_summary_services" android:key="pref_services"/>
+    <PreferenceScreen android:title="@string/pref_title_profiles" android:summary="@string/pref_summary_profiles" android:key="pref_profiles"/>
 </PreferenceScreen>

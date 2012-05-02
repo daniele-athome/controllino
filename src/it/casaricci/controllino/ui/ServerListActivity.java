@@ -170,13 +170,12 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         ServerData data = (ServerData) mAdapter.getItem(info.position);
 
         menu.setHeaderTitle(data.getName());
-        // TODO i18n
-        menu.add(Menu.NONE, MENU_STATUS, MENU_STATUS, "Show status");
-        menu.add(Menu.NONE, MENU_SHUTDOWN, MENU_SHUTDOWN, "Shutdown");
-        menu.add(Menu.NONE, MENU_REBOOT, MENU_REBOOT, "Reboot");
-        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit server");
-        menu.add(Menu.NONE, MENU_EDIT_PROFILE, MENU_EDIT_PROFILE, "Edit server profile");
-        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete server");
+        menu.add(Menu.NONE, MENU_STATUS, MENU_STATUS, R.string.menu_show_status);
+        menu.add(Menu.NONE, MENU_SHUTDOWN, MENU_SHUTDOWN, R.string.menu_shutdown);
+        menu.add(Menu.NONE, MENU_REBOOT, MENU_REBOOT, R.string.menu_reboot);
+        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, R.string.menu_edit_server);
+        menu.add(Menu.NONE, MENU_EDIT_PROFILE, MENU_EDIT_PROFILE, R.string.menu_edit_server_profile);
+        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, R.string.menu_delete_server);
     }
 
     @Override
@@ -198,8 +197,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
-                // TODO i18n
-                }, "Shutting down...");
+                }, R.string.status_shutting_down);
                 return true;
 
             case MENU_REBOOT:
@@ -210,8 +208,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
-                // TODO i18n
-                }, "Rebooting...");
+                }, R.string.status_rebooting);
                 return true;
 
             case MENU_EDIT:
@@ -236,24 +233,20 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SERVER_EDITOR) {
             if (resultCode == RESULT_OK) {
-                // TODO i18n
-                Toast.makeText(this, "Server saved.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_server_saved, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == ServerEditor.RESULT_DELETED) {
-                // TODO i18n
-                Toast.makeText(this, "Server deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_server_deleted, Toast.LENGTH_SHORT).show();
             }
             // onResume will refresh()
         }
 
         if (requestCode == REQUEST_PROFILE_EDITOR) {
             if (resultCode == RESULT_OK) {
-                // TODO i18n
-                Toast.makeText(this, "Profile saved.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_profile_saved, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == ProfileEditor.RESULT_DELETED) {
-                // TODO i18n
-                Toast.makeText(this, "Profile deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_profile_deleted, Toast.LENGTH_SHORT).show();
             }
             // onResume will refresh()
         }
@@ -265,12 +258,11 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     private void connect(ServerData item, ConnectedRunnable action) {
-        // TODO i18n
-        connect(item, action, "Connecting...");
+        connect(item, action, R.string.status_connecting);
     }
 
-    private void connect(ServerData item, ConnectedRunnable action, String connectingStatus) {
-        mStatus.setMessage(connectingStatus);
+    private void connect(ServerData item, ConnectedRunnable action, int connectingStatus) {
+        mStatus.setMessage(getString(connectingStatus));
         mStatus.setOnCancelListener(mAbortConnectionListener);
         mStatus.show();
 
@@ -289,8 +281,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
         // bind to connector
         if (!bindService(i, mConnection, BIND_AUTO_CREATE)) {
-            // TODO i18n
-            error("Unable to bind to connector service.");
+            error(getString(R.string.err_bind_connector));
             return;
         }
     }
@@ -311,9 +302,8 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     private void delete(final long id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-            // TODO i18n
-            .setTitle("Delete server")
-            .setMessage("Server will be deleted.")
+            .setTitle(R.string.menu_delete_server)
+            .setMessage(R.string.msg_server_delete_confirm)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

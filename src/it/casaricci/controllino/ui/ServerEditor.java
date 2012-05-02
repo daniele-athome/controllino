@@ -73,6 +73,7 @@ public class ServerEditor extends ListActivity {
             c.close();
         }
         else {
+            // TODO i18n default template
             list.add(new RecordInfo("name", "New server", R.string.server_field_name));
             list.add(new RecordInfo("profile_id", null, R.string.server_field_profile, RecordInfo.TYPE_SERVER_PROFILE));
             list.add(new RecordInfo("address", "ssh.example.com", R.string.server_field_address, RecordInfo.TYPE_ADDRESS_URL));
@@ -98,8 +99,7 @@ public class ServerEditor extends ListActivity {
         }
         else {
             MenuItem i = menu.findItem(R.id.menu_discard_server);
-            // TODO i18n
-            i.setTitle("Discard changes");
+            i.setTitle(R.string.menu_discard_changes);
         }
 
         return true;
@@ -146,9 +146,8 @@ public class ServerEditor extends ListActivity {
     private void delete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-            // TODO i18n
-            .setTitle("Delete server")
-            .setMessage("Server will be deleted.")
+            .setTitle(R.string.menu_delete_server)
+            .setMessage(R.string.msg_server_delete_confirm)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -179,9 +178,8 @@ public class ServerEditor extends ListActivity {
         if (profile.getDataId() <= 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder
-                // TODO i18n
-                .setTitle("Server editor")
-                .setMessage("No profile selected. Server will be discarded.")
+                .setTitle(R.string.prefs_server_editor)
+                .setMessage(R.string.msg_server_no_profile_selected)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -230,9 +228,7 @@ public class ServerEditor extends ListActivity {
             Cursor c = mConfig.getProfiles();
             int count = c.getCount();
             if (count <= 0) {
-                // TODO i18n
-                Toast.makeText(this,
-                    "No profiles found. Please configure a profile in application settings first.",
+                Toast.makeText(this, R.string.msg_no_profiles_found,
                     Toast.LENGTH_LONG).show();
                 return;
             }

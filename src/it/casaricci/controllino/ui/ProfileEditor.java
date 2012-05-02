@@ -75,7 +75,7 @@ public class ProfileEditor extends ListActivity {
             c.close();
         }
         else {
-            // TODO i18n
+            // TODO i18n default template
             list.add(new RecordInfo("name", "New profile", R.string.profile_meta_name));
             list.add(new RecordInfo("os_name", "Debian", R.string.profile_meta_osname));
             list.add(new RecordInfo("os_version", "6.0.4", R.string.profile_meta_osversion));
@@ -90,8 +90,7 @@ public class ProfileEditor extends ListActivity {
 
         // services label
         TextView v = (TextView) getLayoutInflater().inflate(android.R.layout.preference_category, null, false);
-        // TODO 18n
-        v.setText("Services");
+        v.setText(R.string.profile_header_services);
         adapter.addView(v);
 
         // services adapter
@@ -121,8 +120,7 @@ public class ProfileEditor extends ListActivity {
         }
         else {
             MenuItem i = menu.findItem(R.id.menu_discard_profile);
-            // TODO i18n
-            i.setTitle("Discard changes");
+            i.setTitle(R.string.menu_discard_changes);
         }
 
         return true;
@@ -139,8 +137,8 @@ public class ProfileEditor extends ListActivity {
                 int count = c.getCount();
 
                 if (count <= 0) {
-                    // TODO i18n
-                    Toast.makeText(this, "No services found. Please configure system services in application settings first.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.msg_no_services_found,
+                        Toast.LENGTH_LONG).show();
                 }
                 else {
                     CharSequence[] items = new CharSequence[c.getCount()];
@@ -181,8 +179,7 @@ public class ProfileEditor extends ListActivity {
                     };
 
                     builder
-                        // TODO i18n
-                        .setTitle("Add services")
+                        .setTitle(R.string.menu_add_services)
                         .setPositiveButton(android.R.string.ok, clickListener)
                         .setNegativeButton(android.R.string.cancel, null)
                         .setMultiChoiceItems(items, null, listener);
@@ -289,10 +286,9 @@ public class ProfileEditor extends ListActivity {
         }
         else if (item instanceof ServiceData) {
             final ServiceData data = (ServiceData) item;
-            // TODO i18n
             CharSequence[] items = new CharSequence[] {
-                "Remove service",
-                "Edit service"
+                getString(R.string.menu_remove_service),
+                getString(R.string.menu_edit_service)
             };
 
             mDirty = true;
@@ -321,12 +317,10 @@ public class ProfileEditor extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SERVICE_EDITOR) {
             if (resultCode == RESULT_OK) {
-                // TODO i18n
-                Toast.makeText(this, "Service saved.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_service_saved, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == ServiceEditor.RESULT_DELETED) {
-                // TODO i18n
-                Toast.makeText(this, "Service deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_service_deleted, Toast.LENGTH_SHORT).show();
             }
             refreshServices();
         }

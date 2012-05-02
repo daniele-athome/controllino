@@ -28,7 +28,6 @@ public class DefaultUpstartController extends UpstartController {
 
     @Override
     public CharSequence getServiceDescription() {
-        // TODO
         return mService.getType() + ": " + mService.getCommand();
     }
 

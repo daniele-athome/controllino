@@ -91,10 +91,9 @@ public class ServicesPreferences extends ListActivity {
         ServiceData data = (ServiceData) mAdapter.getItem(info.position);
 
         menu.setHeaderTitle(data.toString());
-        // TODO i18n
-        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, "Edit service");
-        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, "Delete service");
-        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, "Clone service");
+        menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, R.string.menu_edit_service);
+        menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, R.string.menu_delete_service);
+        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, R.string.menu_clone_service);
     }
 
     @Override
@@ -124,12 +123,10 @@ public class ServicesPreferences extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SERVICE_EDITOR) {
             if (resultCode == RESULT_OK) {
-                // TODO i18n
-                Toast.makeText(this, "Service saved.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_service_saved, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == ServiceEditor.RESULT_DELETED) {
-                // TODO i18n
-                Toast.makeText(this, "Service deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_service_deleted, Toast.LENGTH_SHORT).show();
             }
             // onResume will refresh()
         }
@@ -163,6 +160,7 @@ public class ServicesPreferences extends ListActivity {
     }
 
     /** Builtin Service templates. */
+    // TODO should we i18n these?
     private static final String[][] serviceTemplates = {
         { "Apache HTTP server", "2.x", "sysvinit", "apache2", "ctrl_apache" },
         { "MySQL server", "5.x", "sysvinit", "mysql", "ctrl_mysql" },
@@ -173,8 +171,7 @@ public class ServicesPreferences extends ListActivity {
 
     public void newService() {
         CharSequence[] items = new CharSequence[serviceTemplates.length + 1];
-        // TODO i18n
-        items[0] = "No template";
+        items[0] = getString(R.string.service_tmpl_none);
         for (int i = 0; i < serviceTemplates.length; i++)
             items[i + 1] = serviceTemplates[i][0];
 
@@ -199,8 +196,7 @@ public class ServicesPreferences extends ListActivity {
         };
 
         builder
-            // TODO i18n
-            .setTitle("Choose a template")
+            .setTitle(R.string.title_choose_service_template)
             .setItems(items, listener);
 
         builder.create().show();

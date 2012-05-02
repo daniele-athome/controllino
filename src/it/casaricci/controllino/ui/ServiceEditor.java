@@ -98,7 +98,7 @@ public class ServiceEditor extends ListActivity {
             if (name != null || version != null || type != null || command != null)
                 mDirty = i.getBooleanExtra(EXTRA_NEW_DIRTY, false);
 
-            // TODO i18n
+            // TODO i18n default template
             if (name == null) name = "New service";
             if (version == null) version = "1.0";
             if (type == null) type = "sysvinit";
@@ -129,8 +129,7 @@ public class ServiceEditor extends ListActivity {
         }
         else {
             MenuItem i = menu.findItem(R.id.menu_discard_service);
-            // TODO i18n
-            i.setTitle("Discard changes");
+            i.setTitle(R.string.menu_discard_changes);
         }
 
         return true;
@@ -187,7 +186,7 @@ public class ServiceEditor extends ListActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
-            .setTitle("Delete service")
+            .setTitle(R.string.menu_delete_service)
             .setMessage(msgId)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
