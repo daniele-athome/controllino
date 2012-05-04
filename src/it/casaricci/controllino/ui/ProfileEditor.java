@@ -147,50 +147,74 @@ public class ProfileEditor extends ListActivity {
                         Toast.LENGTH_LONG).show();
                 }
                 else {
-                    CharSequence[] items = new CharSequence[c.getCount()];
-                    final long[] itemsId = new long[items.length];
-                    final boolean[] selected = new boolean[items.length];
-                    int i = 0;
+                    List<CharSequence> itemsList = new ArrayList<CharSequence>();
+                    List<Long> itemsIdList = new ArrayList<Long>();
 
                     while (c.moveToNext()) {
-                        itemsId[i] = c.getLong(0);
-                        items[i] = c.getString(1) + " " + c.getString(2);
-                        i++;
+                        long id = c.getLong(0);
+                        boolean skip = false;
+                        for (ServiceData entry : mServicesList) {
+                            if (entry.getId() == id) {
+                                skip = true;
+                                break;
+                            }
+                        }
+
+                        if (skip) continue;
+
+                        itemsList.add(c.getString(1) + " " + c.getString(2));
+                        itemsIdList.add(new Long(c.getLong(0)));
                     }
                     c.close();
 
-                    final DialogInterface.OnMultiChoiceClickListener listener = new DialogInterface.OnMultiChoiceClickListener() {
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            selected[which] = isChecked;
-                        }
-                    };
-                    final DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // go through all selected and add each one to profile
-                            for (int i = 0; i < selected.length; i++) {
-                                if (selected[i]) {
-                                    long sid = itemsId[i];
+                    if (itemsList.size() == 0) {
+                        Toast.makeText(this, R.string.msg_no_services_available,
+                            Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        final boolean[] selected = new boolean[itemsList.size()];
 
-                                    // check if chosen service has already been added
-                                    if (mServicesAdapter.getPosition(new ServiceData(sid)) < 0) {
-                                        mDirty = true;
-                                        Cursor c = mConfig.getService(sid);
-                                        c.moveToNext();
-                                        mServicesAdapter.add(ServiceData.fromCursor(c));
-                                        c.close();
+                        // setup arrays for dialog
+                        final long[] itemsId = new long[selected.length];
+                        final CharSequence[] items = new CharSequence[selected.length];
+                        for (int i = 0; i < itemsId.length; i++) {
+                            items[i] = itemsList.get(i);
+                            itemsId[i] = itemsIdList.get(i).longValue();
+                        }
+
+                        final DialogInterface.OnMultiChoiceClickListener listener = new DialogInterface.OnMultiChoiceClickListener() {
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                selected[which] = isChecked;
+                            }
+                        };
+                        final DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // go through all selected and add each one to profile
+                                for (int i = 0; i < selected.length; i++) {
+                                    if (selected[i]) {
+                                        long sid = itemsId[i];
+
+                                        // check if chosen service has already been added
+                                        if (mServicesAdapter.getPosition(new ServiceData(sid)) < 0) {
+                                            mDirty = true;
+                                            Cursor c = mConfig.getService(sid);
+                                            c.moveToNext();
+                                            mServicesAdapter.add(ServiceData.fromCursor(c));
+                                            c.close();
+                                        }
                                     }
                                 }
                             }
-                        }
-                    };
+                        };
 
-                    builder
-                        .setTitle(R.string.menu_add_services)
-                        .setPositiveButton(android.R.string.ok, clickListener)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setMultiChoiceItems(items, null, listener);
+                        builder
+                            .setTitle(R.string.menu_add_services)
+                            .setPositiveButton(android.R.string.ok, clickListener)
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setMultiChoiceItems(items, null, listener);
 
-                    builder.create().show();
+                        builder.create().show();
+                    }
                 }
 
                 return true;

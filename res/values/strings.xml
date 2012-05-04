@@ -36,6 +36,7 @@
     <string name="service_field_type">Script type</string>
     <string name="service_field_command">Script command</string>
 
+    <string name="msg_no_services_available">No services available to add.</string>
     <string name="msg_no_services_found">No services found. Please configure system services in application settings first.</string>
     <string name="msg_service_delete_confirm">Service will be deleted.</string>
     <string name="msg_service_delete_used_warn">Service is linked to one or more profiles. It will be removed from profiles where is being used.</string>
