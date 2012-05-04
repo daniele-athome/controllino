@@ -75,10 +75,9 @@ public class ProfileEditor extends ListActivity {
             c.close();
         }
         else {
-            // TODO i18n default template
-            list.add(new RecordInfo("name", "New profile", R.string.profile_meta_name));
-            list.add(new RecordInfo("os_name", "Debian", R.string.profile_meta_osname));
-            list.add(new RecordInfo("os_version", "6.0.4", R.string.profile_meta_osversion));
+            list.add(new RecordInfo("name", getString(R.string.tmpl_profile_name), R.string.profile_meta_name));
+            list.add(new RecordInfo("os_name", getString(R.string.tmpl_profile_os_name), R.string.profile_meta_osname));
+            list.add(new RecordInfo("os_version", getString(R.string.tmpl_profile_os_version), R.string.profile_meta_osversion));
         }
 
         MergeAdapter adapter = new MergeAdapter();

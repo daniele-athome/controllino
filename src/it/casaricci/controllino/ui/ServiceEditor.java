@@ -44,6 +44,8 @@ public class ServiceEditor extends ListActivity {
 
     public static final int RESULT_DELETED = RESULT_FIRST_USER;
 
+    private static final String DEFAULT_SCRIPT_TYPE = "sysvinit";
+
     /** The service editor adapter. */
     private ServiceEditorAdapter mAdapter;
     /** Service Id - if any. */
@@ -98,10 +100,9 @@ public class ServiceEditor extends ListActivity {
             if (name != null || version != null || type != null || command != null)
                 mDirty = i.getBooleanExtra(EXTRA_NEW_DIRTY, false);
 
-            // TODO i18n default template
-            if (name == null) name = "New service";
-            if (version == null) version = "1.0";
-            if (type == null) type = "sysvinit";
+            if (name == null) name = getString(R.string.tmpl_service_name);
+            if (version == null) version = getString(R.string.tmpl_service_version);
+            if (type == null) type = DEFAULT_SCRIPT_TYPE;
             if (command == null) command = "initscript";
 
             mIconResId = i.getStringExtra(EXTRA_SERVICE_ICON);

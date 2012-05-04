@@ -37,6 +37,11 @@ public class ServerEditor extends ListActivity {
 
     public static final int RESULT_DELETED = RESULT_FIRST_USER;
 
+    private static final String DEFAULT_HOST = "ssh.example.com";
+    private static final String DEFAULT_PORT = "22";
+    private static final String DEFAULT_USERNAME = "root";
+    private static final String DEFAULT_PASSWORD = "";
+
     /** The server editor adapter. */
     private ServerEditorAdapter mAdapter;
     /** Service Id - if any. */
@@ -73,13 +78,12 @@ public class ServerEditor extends ListActivity {
             c.close();
         }
         else {
-            // TODO i18n default template
-            list.add(new RecordInfo("name", "New server", R.string.server_field_name));
+            list.add(new RecordInfo("name", getString(R.string.tmpl_server_name), R.string.server_field_name));
             list.add(new RecordInfo("profile_id", null, R.string.server_field_profile, RecordInfo.TYPE_SERVER_PROFILE));
-            list.add(new RecordInfo("address", "ssh.example.com", R.string.server_field_address, RecordInfo.TYPE_ADDRESS_URL));
-            list.add(new RecordInfo("port", "22", R.string.server_field_port, RecordInfo.TYPE_NUMBER));
-            list.add(new RecordInfo("username", "root", R.string.server_field_username, RecordInfo.TYPE_USERNAME));
-            list.add(new RecordInfo("password", "root", R.string.server_field_password, RecordInfo.TYPE_PASSWORD));
+            list.add(new RecordInfo("address", DEFAULT_HOST, R.string.server_field_address, RecordInfo.TYPE_ADDRESS_URL));
+            list.add(new RecordInfo("port", DEFAULT_PORT, R.string.server_field_port, RecordInfo.TYPE_NUMBER));
+            list.add(new RecordInfo("username", DEFAULT_USERNAME, R.string.server_field_username, RecordInfo.TYPE_USERNAME));
+            list.add(new RecordInfo("password", DEFAULT_PASSWORD, R.string.server_field_password, RecordInfo.TYPE_PASSWORD));
         }
 
         // editor adapter

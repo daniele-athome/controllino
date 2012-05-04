@@ -102,4 +102,13 @@
 
     <string name="err_bind_connector">Unable to bind to connector service.</string>
 
+    <string name="tmpl_profile_name">New profile</string>
+    <string name="tmpl_profile_os_name">Debian</string>
+    <string name="tmpl_profile_os_version">6.0.4</string>
+    
+    <string name="tmpl_service_name">New service</string>
+    <string name="tmpl_service_version">1.0</string>
+
+    <string name="tmpl_server_name">New server</string>
+    
 </resources>
