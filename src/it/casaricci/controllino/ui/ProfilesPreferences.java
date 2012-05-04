@@ -91,7 +91,7 @@ public class ProfilesPreferences extends ListActivity {
         menu.setHeaderTitle(data.getName());
         menu.add(Menu.NONE, MENU_EDIT, MENU_EDIT, R.string.menu_edit_profile);
         menu.add(Menu.NONE, MENU_DELETE, MENU_DELETE, R.string.menu_delete_profile);
-        menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, R.string.menu_clone_profile);
+        // TODO menu.add(Menu.NONE, MENU_CLONE, MENU_CLONE, R.string.menu_clone_profile);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ProfilesPreferences extends ListActivity {
     }
 
     private void clone(ServerProfileData item) {
-        // TODO clone server :)
+        // TODO clone profile :)
     }
 
 }
