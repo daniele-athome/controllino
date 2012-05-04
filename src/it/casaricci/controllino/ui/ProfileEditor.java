@@ -111,6 +111,12 @@ public class ProfileEditor extends ListActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        refreshServices();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.profile_editor_menu, menu);
@@ -322,7 +328,7 @@ public class ProfileEditor extends ListActivity {
             else if (resultCode == ServiceEditor.RESULT_DELETED) {
                 Toast.makeText(this, R.string.msg_service_deleted, Toast.LENGTH_SHORT).show();
             }
-            refreshServices();
+            // onResume will refreshServices()
         }
     }
 
@@ -359,7 +365,22 @@ public class ProfileEditor extends ListActivity {
     }
 
     private void refreshServices() {
-        // TODO different things to do if the service exists or is new
+        // different things to do if the service exists or is new
+        for (ServiceData entry : mServicesList) {
+            List<ServiceData> removed = new ArrayList<ServiceData>();
+            Cursor c = mConfig.getService(entry.getId());
+            if (c.moveToFirst()) {
+                // reload service
+                entry.fillFromCursor(c);
+            }
+            else {
+                // service deleted - remove from adapter (later)
+                removed.add(entry);
+            }
+            c.close();
+            mServicesList.removeAll(removed);
+            mServicesAdapter.notifyDataSetChanged();
+        }
     }
 
     public static Intent newEditor(Context context) {

@@ -7,15 +7,15 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import android.database.Cursor;
-import android.widget.ArrayAdapter;
 
 
 /**
- * Item class used by {@link ArrayAdapter} in {@link ProfileEditor}.
+ * Item class used by {@link ProfileServicesAdapter} in {@link ProfileEditor}.
+ * And more :)
  * @author Daniele Ricci
  */
 public class ServiceData {
-    private final long id;
+    private long id;
     private String name;
     private String version;
     private String type;
@@ -75,6 +75,15 @@ public class ServiceData {
         return new ServiceData(c.getLong(0),
             c.getString(1), c.getString(2), c.getString(3),
             c.getString(4), c.getString(5));
+    }
+
+    public void fillFromCursor(Cursor c) {
+        id = c.getLong(0);
+        name = c.getString(1);
+        version = c.getString(2);
+        type = c.getString(3);
+        command = c.getString(4);
+        icon = c.getString(5);
     }
 
     public static long[] toIdList(List<ServiceData> list) {
