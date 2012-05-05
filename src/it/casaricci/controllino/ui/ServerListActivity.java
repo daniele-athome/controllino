@@ -51,7 +51,12 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         public void run(ConnectorInterface conn) {
             mStatus.dismiss();
             Intent i = new Intent(ServerListActivity.this, StatusActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            i.putExtra(ConnectorService.EXTRA_HOST, conn.host);
+            i.putExtra(ConnectorService.EXTRA_PORT, conn.port);
+            i.putExtra(ConnectorService.EXTRA_PROFILE_ID, conn.profileId);
+            i.putExtra(ConnectorService.EXTRA_USERNAME, conn.username);
+            i.putExtra(ConnectorService.EXTRA_PASSWORD, conn.password);
+            //i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(i);
         }
     };
@@ -60,20 +65,29 @@ public class ServerListActivity extends ListActivity implements ConnectorService
 
     private final class ConnectorServiceConnection implements ServiceConnection {
         private ConnectorInterface connection;
+        private String host;
+        private int port;
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             connection = null;
         }
 
+        public void setParams(String host, int port) {
+            this.host = host;
+            this.port = port;
+        }
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            connection = (ConnectorService.ConnectorInterface) service;
+            ConnectorService.ConnectorBinder binder = (ConnectorService.ConnectorBinder) service;
+            connection = binder.getConnector(host, port);
             connection.listener = ServerListActivity.this;
             if (!connection.isConnected())
                 connection.connect();
             else
                 connected(connection);
+            disconnect();
         }
 
         public void disconnect() {
@@ -267,20 +281,19 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         mStatus.show();
 
         mConnectedAction = action;
+        mConnection.setParams(item.getHost(), item.getPort());
 
         // start service first
-        startService(new Intent(this, ConnectorService.class));
-
-        // prepare intent for connector
         Intent i = new Intent(this, ConnectorService.class);
         i.putExtra(ConnectorService.EXTRA_PROFILE_ID, item.getProfileId());
         i.putExtra(ConnectorService.EXTRA_HOST, item.getHost());
         i.putExtra(ConnectorService.EXTRA_PORT, item.getPort());
         i.putExtra(ConnectorService.EXTRA_USERNAME, item.getUsername());
         i.putExtra(ConnectorService.EXTRA_PASSWORD, item.getPassword());
+        startService(i);
 
         // bind to connector
-        if (!bindService(i, mConnection, BIND_AUTO_CREATE)) {
+        if (!bindService(new Intent(this, ConnectorService.class), mConnection, 0)) {
             error(getString(R.string.err_bind_connector));
             return;
         }

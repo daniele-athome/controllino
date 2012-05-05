@@ -40,6 +40,9 @@ public class StatusActivity extends ListActivity {
 
 	private String mHost;
 	private int mPort;
+	private long mProfileId;
+	private String mUsername;
+	private String mPassword;
 
     private ResultListener mResultListener = new ResultListener() {
 		@Override
@@ -68,7 +71,8 @@ public class StatusActivity extends ListActivity {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mConnector = (ConnectorService.ConnectorInterface) service;
+		    ConnectorService.ConnectorBinder binder = (ConnectorService.ConnectorBinder) service;
+			mConnector = binder.getConnector(mHost, mPort);
 			if (!mConnector.isConnected()) {
 			    // TODO reconnection??
 			}
@@ -114,6 +118,9 @@ public class StatusActivity extends ListActivity {
 	    Intent i = getIntent();
 	    mHost = i.getStringExtra(ConnectorService.EXTRA_HOST);
 	    mPort = i.getIntExtra(ConnectorService.EXTRA_PORT, ConnectorService.DEFAULT_PORT);
+	    mProfileId = i.getLongExtra(ConnectorService.EXTRA_PROFILE_ID, 0);
+        mUsername = i.getStringExtra(ConnectorService.EXTRA_USERNAME);
+        mPassword = i.getStringExtra(ConnectorService.EXTRA_PASSWORD);
 
 	    /*
 	    mStatus = new ProgressDialog(this);
@@ -177,14 +184,18 @@ public class StatusActivity extends ListActivity {
     protected void onStart() {
         super.onStart();
 
-        // prepare intent for connector
+        // start service
         Intent i = new Intent(this, ConnectorService.class);
         i.putExtra(ConnectorService.EXTRA_HOST, mHost);
         i.putExtra(ConnectorService.EXTRA_PORT, mPort);
+        i.putExtra(ConnectorService.EXTRA_PROFILE_ID, mProfileId);
+        i.putExtra(ConnectorService.EXTRA_USERNAME, mUsername);
+        i.putExtra(ConnectorService.EXTRA_PASSWORD, mPassword);
+        startService(i);
 
         // bind to connector
-        if (!bindService(i, mConnection, BIND_AUTO_CREATE)) {
-            error("Unable to bind to connector service.");
+        if (!bindService(new Intent(this, ConnectorService.class), mConnection, 0)) {
+            error(getString(R.string.err_bind_connector));
             finish();
         }
     }

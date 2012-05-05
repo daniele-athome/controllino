@@ -32,6 +32,8 @@ public class ConnectorService extends Service {
 	/** Default SSH port. */
 	public static final int DEFAULT_PORT = 22;
 
+	private final ConnectorBinder mBinder = new ConnectorBinder();
+
 	/** Connections table. */
 	private Map<InetSocketAddress, ConnectorInterface> mConnections =
 	    new HashMap<InetSocketAddress, ConnectorInterface>(1);
@@ -45,11 +47,6 @@ public class ConnectorService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		return START_NOT_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
         String host = intent.getStringExtra(EXTRA_HOST);
         int port = intent.getIntExtra(EXTRA_PORT, DEFAULT_PORT);
 
@@ -68,7 +65,12 @@ public class ConnectorService extends Service {
             mConnections.put(addr, conn);
         }
 
-		return conn;
+		return START_NOT_STICKY;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+	    return mBinder;
 	}
 
 	@Override
@@ -88,7 +90,14 @@ public class ConnectorService extends Service {
         }
 	}
 
-	public static final class ConnectorInterface extends Binder {
+	public final class ConnectorBinder extends Binder {
+	    public ConnectorInterface getConnector(String host, int port) {
+	        InetSocketAddress addr = new InetSocketAddress(host, port);
+	        return mConnections.get(addr);
+	    }
+	}
+
+	public static final class ConnectorInterface {
         public String host;
         public int port;
         public String username;
@@ -119,6 +128,12 @@ public class ConnectorService extends Service {
 	            connector.close();
 	            connector = null;
 	        }
+	    }
+
+	    @Override
+	    public String toString() {
+	        return getClass().getSimpleName() + '@' + Integer.toHexString(hashCode()) +
+	            " [host=" + host + ", port=" + port + ", username=" + username + "]";
 	    }
 
 	    private final class Connector extends Thread {
