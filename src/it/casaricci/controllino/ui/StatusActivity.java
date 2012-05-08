@@ -64,6 +64,8 @@ public class StatusActivity extends ListActivity {
 	private ConnectorServiceConnection mConnection = new ConnectorServiceConnection();
 
 	private final class ConnectorServiceConnection implements ServiceConnection {
+	    private ConnectorService.ConnectorBinder binder;
+
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			mConnector = null;
@@ -71,7 +73,7 @@ public class StatusActivity extends ListActivity {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-		    ConnectorService.ConnectorBinder binder = (ConnectorService.ConnectorBinder) service;
+		    binder = (ConnectorService.ConnectorBinder) service;
 			mConnector = binder.getConnector(mHost, mPort);
 			if (!mConnector.isConnected()) {
 			    // TODO reconnection??
@@ -84,6 +86,8 @@ public class StatusActivity extends ListActivity {
 				unbindService(this);
 				// invalidate connection immediately
 				mConnector = null;
+				binder.cleanup();
+				binder = null;
 			}
 		}
 	};

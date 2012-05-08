@@ -95,6 +95,19 @@ public class ConnectorService extends Service {
 	        InetSocketAddress addr = InetSocketAddress.createUnresolved(host, port);
 	        return mConnections.get(addr);
 	    }
+
+	    public void cleanup() {
+	        boolean stop = true;
+	        for (ConnectorInterface conn : mConnections.values()) {
+	            if (!conn.isClosed()) {
+	                Log.d(TAG, "found active connection - aborting stop");
+	                stop = false;
+	                break;
+	            }
+	        }
+	        if (stop)
+	            stopSelf();
+	    }
 	}
 
 	public static final class ConnectorInterface {
@@ -109,12 +122,14 @@ public class ConnectorService extends Service {
 
         private JSch mJsch;
         private Connector connector;
+        private boolean closed;
 
 	    public ConnectorInterface(JSch jsch) {
 	        mJsch = jsch;
 	    }
 
 	    public void connect() {
+	        closed = false;
 	        connector = new Connector();
 	        connector.start();
 	    }
@@ -123,7 +138,12 @@ public class ConnectorService extends Service {
 	        return (session != null && session.isConnected());
 	    }
 
+	    public boolean isClosed() {
+	        return closed;
+	    }
+
 	    public void disconnect() {
+            closed = true;
 	        if (connector != null) {
 	            connector.close();
 	            connector = null;
