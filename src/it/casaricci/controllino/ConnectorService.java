@@ -52,7 +52,7 @@ public class ConnectorService extends Service {
 
         Log.v(TAG, "connection request to " + host + ":" + port);
 
-        InetSocketAddress addr = new InetSocketAddress(host, port);
+        InetSocketAddress addr = InetSocketAddress.createUnresolved(host, port);
         ConnectorInterface conn = mConnections.get(addr);
         if (conn == null) {
             Log.v(TAG, "creating new instance for " + host + ":" + port);
@@ -92,7 +92,7 @@ public class ConnectorService extends Service {
 
 	public final class ConnectorBinder extends Binder {
 	    public ConnectorInterface getConnector(String host, int port) {
-	        InetSocketAddress addr = new InetSocketAddress(host, port);
+	        InetSocketAddress addr = InetSocketAddress.createUnresolved(host, port);
 	        return mConnections.get(addr);
 	    }
 	}

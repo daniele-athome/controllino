@@ -1,9 +1,11 @@
+[ ] auto-close ConnectorService when all connections are closed
 [ ] when rendering entries partially, new entries don't get refresh (is it a UI
     thing or it's the service status?)
 [ ] ask confirmation upon actions (shutdown/reboot, even better also for
     start/stop)
 [ ] clone server profile
 [ ] removing multiple services from a profile at once
+[x] InetAddress tries to resolve hostname (blocking)
 [x] filter out already added services from Profile editor > "Add services" dialog
 [x] refresh profile editor
 [x] adding multiple services to a profile at once
