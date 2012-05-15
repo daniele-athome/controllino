@@ -204,25 +204,25 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 return true;
 
             case MENU_SHUTDOWN:
-                connect(data, new ConnectedRunnable() {
+                connectConfirm(data, new ConnectedRunnable() {
                     @Override
                     public void run(ConnectorInterface conn) {
                         Executor exec = new Executor(conn, "shutdown -h -P now");
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
-                }, R.string.status_shutting_down);
+                }, R.string.status_shutting_down, R.string.menu_shutdown, R.string.confirm_shutdown);
                 return true;
 
             case MENU_REBOOT:
-                connect(data, new ConnectedRunnable() {
+                connectConfirm(data, new ConnectedRunnable() {
                     @Override
                     public void run(ConnectorInterface conn) {
                         Executor exec = new Executor(conn, "shutdown -r now");
                         exec.setListener(ServerListActivity.this);
                         exec.start();
                     }
-                }, R.string.status_rebooting);
+                }, R.string.status_rebooting, R.string.menu_reboot, R.string.confirm_reboot);
                 return true;
 
             case MENU_EDIT:
@@ -269,6 +269,22 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
         connect((ServerData) mAdapter.getItem(position), mShowStatusAction);
+    }
+
+    private void connectConfirm(final ServerData item, final ConnectedRunnable action,
+            final int connectingStatus, int title, int prompt) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+            .setTitle(title)
+            .setMessage(prompt)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    connect(item, action, connectingStatus);
+                }
+            })
+            .show();
     }
 
     private void connect(ServerData item, ConnectedRunnable action) {

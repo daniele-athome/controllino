@@ -111,4 +111,7 @@
 
     <string name="tmpl_server_name">New server</string>
     
+    <string name="confirm_shutdown">Server will shutdown.</string>
+    <string name="confirm_reboot">Server will reboot.</string>
+    
 </resources>
