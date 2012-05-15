@@ -187,9 +187,13 @@ public class ServerEditor extends ListActivity {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mServerId > 0)
+                        if (mServerId > 0) {
                             mConfig.removeServer(mServerId);
-                        end(RESULT_DELETED, false, true);
+                            end(RESULT_DELETED, false, true);
+                        }
+                        else {
+                            setResult(RESULT_CANCELED);
+                        }
                         finish();
                     }
                 })
