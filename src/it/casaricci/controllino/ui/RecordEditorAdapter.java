@@ -82,9 +82,12 @@ public abstract class RecordEditorAdapter extends ArrayAdapter<RecordInfo> {
                 display = mContext.getString(stringId);
             else
                 display = item.getData();
+            holder.textSummary.setVisibility(View.VISIBLE);
         }
-        else
+        else {
             display = item.getData();
+            holder.textSummary.setVisibility(View.VISIBLE);
+        }
 
         holder.textTitle.setText(mContext.getString(item.getResourceId()));
         holder.textSummary.setText(display);
