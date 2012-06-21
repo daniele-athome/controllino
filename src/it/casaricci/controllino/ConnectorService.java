@@ -59,11 +59,13 @@ public class ConnectorService extends Service {
             conn = new ConnectorInterface(mJsch);
             conn.host = host;
             conn.port = port;
-            conn.profileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
-            conn.username = intent.getStringExtra(EXTRA_USERNAME);
-            conn.password = intent.getStringExtra(EXTRA_PASSWORD);
             mConnections.put(addr, conn);
         }
+
+        // update to latest configuration data
+        conn.profileId = intent.getLongExtra(EXTRA_PROFILE_ID, 0);
+        conn.username = intent.getStringExtra(EXTRA_USERNAME);
+        conn.password = intent.getStringExtra(EXTRA_PASSWORD);
 
 		return START_NOT_STICKY;
 	}
