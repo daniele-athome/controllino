@@ -4,11 +4,12 @@
     android:versionCode="6"
     android:versionName="1.3.2" >
 
-    <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="14" />
+    <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
 
     <application
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
 
@@ -17,7 +18,7 @@
         <activity android:name=".ui.MainPreferences"/>
         <activity android:name=".ui.ServicesPreferences" android:label="@string/prefs_services"/>
         <activity android:name=".ui.ProfilesPreferences" android:label="@string/prefs_profiles"/>
-        
+
         <activity android:name=".ui.ServerListActivity" android:theme="@style/Theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -28,7 +29,7 @@
         <activity android:name=".ui.ProfileEditor" android:label="@string/prefs_profile_editor"/>
         <activity android:name=".ui.ServiceEditor" android:label="@string/prefs_service_editor"/>
         <activity android:name=".ui.ServerEditor" android:label="@string/prefs_server_editor"/>
-        
+
     </application>
 
 </manifest>
