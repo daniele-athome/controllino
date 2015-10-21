@@ -90,7 +90,7 @@ public class StatusActivity extends ListActivity {
 				binder = null;
 			}
 		}
-	};
+	}
 
 	/** Called when the activity is first created. */
 	@Override

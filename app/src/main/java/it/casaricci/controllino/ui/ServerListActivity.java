@@ -97,7 +97,7 @@ public class ServerListActivity extends ListActivity implements ConnectorService
                 connection = null;
             }
         }
-    };
+    }
 
     /** Reusable abort connection listener. */
     private DialogInterface.OnCancelListener mAbortConnectionListener = new DialogInterface.OnCancelListener() {
@@ -311,7 +311,6 @@ public class ServerListActivity extends ListActivity implements ConnectorService
         // bind to connector
         if (!bindService(new Intent(this, ConnectorService.class), mConnection, 0)) {
             error(getString(R.string.err_bind_connector));
-            return;
         }
     }
 
@@ -395,6 +394,6 @@ public class ServerListActivity extends ListActivity implements ConnectorService
     }
 
     private interface ConnectedRunnable {
-        public void run(ConnectorInterface conn);
+        void run(ConnectorInterface conn);
     }
 }

@@ -35,7 +35,7 @@ public class ConnectorService extends Service {
 	private final ConnectorBinder mBinder = new ConnectorBinder();
 
 	/** Connections table. */
-	private Map<InetSocketAddress, ConnectorInterface> mConnections =
+	private final Map<InetSocketAddress, ConnectorInterface> mConnections =
 	    new HashMap<InetSocketAddress, ConnectorInterface>(1);
 
 	private JSch mJsch = new JSch();
@@ -201,9 +201,9 @@ public class ConnectorService extends Service {
 	}
 
 	public interface ConnectorListener {
-		public void connected(ConnectorInterface connector);
-		public void connectionError(ConnectorInterface connector, Throwable e);
-		public void disconnected(ConnectorInterface connector);
+		void connected(ConnectorInterface connector);
+		void connectionError(ConnectorInterface connector, Throwable e);
+		void disconnected(ConnectorInterface connector);
 	}
 
 }

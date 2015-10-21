@@ -63,7 +63,7 @@ public class ServiceStatusListAdapter extends BaseAdapter {
 	        // get services from connector's profile
 		    Cursor c = Configuration.getInstance(mInflater.getContext()).getServices(connector.profileId);
 		    while (c.moveToNext()) {
-		        BaseController ctrl = null;
+		        BaseController ctrl;
 		        ServiceData data = ServiceData.fromCursor(c);
 		        ctrl = ShellController.newInstance(connector, data);
 

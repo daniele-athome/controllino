@@ -162,7 +162,7 @@ public class ProfileEditor extends ListActivity {
                         if (skip) continue;
 
                         itemsList.add(c.getString(1) + " " + c.getString(2));
-                        itemsIdList.add(new Long(c.getLong(0)));
+                        itemsIdList.add(c.getLong(0));
                     }
                     c.close();
 
@@ -178,7 +178,7 @@ public class ProfileEditor extends ListActivity {
                         final CharSequence[] items = new CharSequence[selected.length];
                         for (int i = 0; i < itemsId.length; i++) {
                             items[i] = itemsList.get(i);
-                            itemsId[i] = itemsIdList.get(i).longValue();
+                            itemsId[i] = itemsIdList.get(i);
                         }
 
                         final DialogInterface.OnMultiChoiceClickListener listener = new DialogInterface.OnMultiChoiceClickListener() {
@@ -247,7 +247,7 @@ public class ProfileEditor extends ListActivity {
     }
 
     private void end(int resultCode, boolean save, boolean ignoreDirty) {
-        if (ignoreDirty ? true : mDirty) {
+        if (ignoreDirty || mDirty) {
             if (save)
                 save();
             setResult(resultCode);

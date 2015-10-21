@@ -58,8 +58,8 @@ public abstract class ShellController extends BaseController {
     }
 
     public interface ShellExecuteListener {
-        public void onError(ShellController ctrl, Throwable e);
-        public void onExecuteFinish(ShellController ctrl, int exitStatus, byte[] output);
+        void onError(ShellController ctrl, Throwable e);
+        void onExecuteFinish(ShellController ctrl, int exitStatus, byte[] output);
     }
 
     public static class StartStopException extends Exception {
@@ -108,7 +108,7 @@ public abstract class ShellController extends BaseController {
                         exitStatus = channel.getExitStatus();
                         break;
                     }
-                    try{Thread.sleep(500);}catch(Exception ee){}
+                    try{Thread.sleep(500);}catch(Exception ignored){}
                 }
             }
             catch (Exception e) {
@@ -116,7 +116,7 @@ public abstract class ShellController extends BaseController {
                     mShellExecuteListener.onError(ShellController.this, e);
             }
             finally {
-                try { channel.disconnect(); } catch (Exception e) {}
+                try { channel.disconnect(); } catch (Exception ignored) {}
             }
 
             // invalidate executor instance

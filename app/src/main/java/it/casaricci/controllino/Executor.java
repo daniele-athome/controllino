@@ -50,7 +50,7 @@ public class Executor extends Thread {
                     exitStatus = channel.getExitStatus();
                     break;
                 }
-                try{Thread.sleep(500);}catch(Exception ee){}
+                try{Thread.sleep(500);}catch(Exception ignored){}
             }
         }
         catch (Exception e) {
@@ -58,7 +58,7 @@ public class Executor extends Thread {
                 mListener.onError(this, e);
         }
         finally {
-            try { channel.disconnect(); } catch (Exception e) {}
+            try { channel.disconnect(); } catch (Exception ignored) {}
         }
 
         if (mListener != null)
@@ -66,8 +66,8 @@ public class Executor extends Thread {
     }
 
     public interface ExecuteListener {
-        public void onError(Executor exec, Throwable e);
-        public void onExecuteFinish(Executor exec, int exitStatus);
+        void onError(Executor exec, Throwable e);
+        void onExecuteFinish(Executor exec, int exitStatus);
     }
 
 }

@@ -169,7 +169,7 @@ public class ServiceEditor extends ListActivity {
     }
 
     private void end(int resultCode, boolean save, boolean ignoreDirty) {
-        if (ignoreDirty ? true : mDirty) {
+        if (ignoreDirty || mDirty) {
             if (save)
                 save();
             setResult(resultCode);

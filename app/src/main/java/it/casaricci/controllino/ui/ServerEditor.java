@@ -138,7 +138,7 @@ public class ServerEditor extends ListActivity {
 
     private boolean end(int resultCode, boolean save, boolean ignoreDirty) {
         boolean exit = true;
-        if (ignoreDirty ? true : mDirty) {
+        if (ignoreDirty || mDirty) {
             if (save)
                 exit = save();
             setResult(resultCode);
