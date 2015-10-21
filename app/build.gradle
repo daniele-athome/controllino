@@ -20,6 +20,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
-    compile files('libs/CWAC-SackOfViewsAdapter.jar')
-    compile files('libs/jsch-0.1.46.jar')
+    compile 'com.jcraft:jsch:0.1.53'
+    compile 'com.commonsware.cwac:sacklist:1.0.0'
 }
